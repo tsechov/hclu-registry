@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD "created_on" TIMESTAMP NOT NULL;
