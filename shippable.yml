@@ -10,8 +10,8 @@ jdk:
 
 before_install:
   - mkdir -p shippable/testresults
+  - sudo apt-get -y install libfontconfig man
   - source ~/.nvm/nvm.sh && nvm install $SHIPPABLE_NODE_VERSION
-  - sudo apt-get -y install libfontconfig
   - node --version
   - npm --version
   - npm install -g grunt-cli bower
