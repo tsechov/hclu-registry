@@ -3,6 +3,9 @@ language: scala
 node_js:
   - 0.12.2
 
+jdk:
+   - oraclejdk8
+
 before_install:
   - mkdir -p shippable/testresults
   - source ~/.nvm/nvm.sh && nvm install $SHIPPABLE_NODE_VERSION
