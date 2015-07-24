@@ -2,9 +2,9 @@ package uitest
 
 import java.util.concurrent.TimeUnit
 
-import com.softwaremill.bootzooka.dao.{SqlPasswordResetCodeSchema, SqlUserSchema}
-import com.softwaremill.bootzooka.service.email.DummyEmailService
-import com.softwaremill.bootzooka.{Beans, EmbeddedJetty, EmbeddedJettyConfig}
+import hclu.hreg.dao.{SqlPasswordResetCodeSchema, SqlUserSchema}
+import hclu.hreg.service.email.DummyEmailService
+import hclu.hreg.{Beans, EmbeddedJetty, EmbeddedJettyConfig}
 import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.webapp.WebAppContext
 import org.openqa.selenium.firefox.FirefoxDriver

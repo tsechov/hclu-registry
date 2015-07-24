@@ -2,8 +2,8 @@
 
 describe('User Session Controller', function () {
 
-    beforeEach(module('smlBootzooka.session'));
-    beforeEach(module('smlBootzooka.common.services'));
+    beforeEach(module('smlHreg.session'));
+    beforeEach(module('smlHreg.common.services'));
 
     var userSessionService;
 

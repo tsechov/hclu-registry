@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.profile').controller('RegisterCtrl', function RegisterCtrl($scope, RegisterService, $state) {
+angular.module('smlHreg.profile').controller('RegisterCtrl', function RegisterCtrl($scope, RegisterService, $state) {
 
     $scope.user = {};
     $scope.user.login = '';

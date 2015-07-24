@@ -1,5 +1,5 @@
 {
-  "name": "bootzooka-ui-deps",
+  "name": "hreg-ui-deps",
   "dependencies": {
     "angular": "~1.3.15",
     "angular-cookies": "~1.3.15",

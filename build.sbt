@@ -69,7 +69,7 @@ lazy val seleniumStack = Seq(seleniumJava, seleniumFirefox, fest)
 // As provided implies test, so is enough here.
 lazy val servletApiProvided = "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided" artifacts Artifact("javax.servlet", "jar", "jar")
 
-name := "bootzooka"
+name := "hreg"
 
 // factor out common settings into a sequence
 lazy val commonSettings = scalariformSettings ++ Seq(
@@ -116,7 +116,7 @@ lazy val backend: Project = (project in file("backend"))
   .settings(
     libraryDependencies ++= (jodaDependencies ++ slickStack ++ scalatraStack :+ javaxMailSun) ++
       Seq(jettyContainer, typesafeConfig, servletApiProvided, bugsnag),
-    buildInfoPackage := "com.softwaremill.bootzooka.version",
+    buildInfoPackage := "hclu.hreg.version",
     buildInfoObject := "BuildInfo",
     buildInfoKeys := Seq[BuildInfoKey](
       BuildInfoKey.action("buildDate")(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())),
@@ -124,7 +124,7 @@ lazy val backend: Project = (project in file("backend"))
       BuildInfoKey.action("buildSha")(Try(Process("git rev-parse HEAD").!!.stripLineEnd).getOrElse("?"))),
     Seq(
       artifactName := { (config: ScalaVersion, module: ModuleID, artifact: Artifact) =>
-        "bootzooka." + artifact.extension // produces nice war name -> http://stackoverflow.com/questions/8288859/how-do-you-remove-the-scala-version-postfix-from-artifacts-builtpublished-wi
+        "hreg." + artifact.extension // produces nice war name -> http://stackoverflow.com/questions/8288859/how-do-you-remove-the-scala-version-postfix-from-artifacts-builtpublished-wi
       },
       // We need to include the whole webapp, hence replacing the resource directory
       webappResources in Compile <<= baseDirectory { bd =>
@@ -156,12 +156,12 @@ lazy val dist = (project in file("dist"))
   .settings(DeployToHeroku.settings: _*)
   .settings(
     libraryDependencies += jetty,
-    mainClass in assembly := Some("com.softwaremill.bootzooka.AppRunner"),
+    mainClass in assembly := Some("hclu.hreg.AppRunner"),
     // We need to include the whole webapp, hence replacing the resource directory
     unmanagedResourceDirectories in Compile <<= baseDirectory { bd => {
       List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
     } },
-    assemblyJarName in assembly := "bootzooka.jar",
+    assemblyJarName in assembly := "hreg.jar",
     assembly <<= assembly dependsOn gruntTask("build")
   ) dependsOn(ui, backend)
 

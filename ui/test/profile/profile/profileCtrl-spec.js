@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Profile Controller', function () {
-    beforeEach(module('smlBootzooka.profile'));
+    beforeEach(module('smlHreg.profile'));
     afterEach(inject(function (_$httpBackend_) {
         _$httpBackend_.verifyNoOutstandingExpectation();
         _$httpBackend_.verifyNoOutstandingRequest();

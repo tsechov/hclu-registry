@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.profile').factory('PasswordRecoveryService', function ($q, $http) {
+angular.module('smlHreg.profile').factory('PasswordRecoveryService', function ($q, $http) {
     var passwordRecoveryService = {};
 
     passwordRecoveryService.beginResetProcess = function (login) {

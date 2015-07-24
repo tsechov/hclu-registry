@@ -1,6 +1,6 @@
 package uitest
 
-import com.softwaremill.bootzooka.version.BuildInfo._
+import hclu.hreg.version.BuildInfo._
 import org.fest.assertions.Assertions
 
 import scala.concurrent.ExecutionContext.Implicits.global

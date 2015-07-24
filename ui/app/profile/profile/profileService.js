@@ -1,4 +1,4 @@
-angular.module('smlBootzooka.profile').factory('ProfileService', function ($resource, $cookies) {
+angular.module('smlHreg.profile').factory('ProfileService', function ($resource, $cookies) {
     var profileService = {};
 
     this.profileResource = $resource('api/users', {}, {

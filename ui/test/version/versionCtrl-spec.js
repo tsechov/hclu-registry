@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Version Controller', function () {
-    beforeEach(module('smlBootzooka.version'));
+    beforeEach(module('smlHreg.version'));
 
     var scope, $httpBackend;
 

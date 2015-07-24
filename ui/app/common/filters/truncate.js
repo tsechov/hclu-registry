@@ -1,4 +1,4 @@
-angular.module('smlBootzooka.common.filters')
+angular.module('smlHreg.common.filters')
 
     .filter('truncate', function () {
         return function (text, length, end) {

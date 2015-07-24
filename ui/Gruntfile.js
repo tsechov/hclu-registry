@@ -84,7 +84,7 @@ module.exports = function (grunt) {
                 },
                 src: ['app/**/*.html'],
                 dest: '.tmp/scripts/templates.js',
-                module: 'smlBootzooka.templates'
+                module: 'smlHreg.templates'
             }
         },
 
@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        src: ['.tmp/concat/scripts/bootzooka-all.js']
+                        src: ['.tmp/concat/scripts/hreg-all.js']
                     }
                 ]
             }
@@ -183,7 +183,7 @@ module.exports = function (grunt) {
             app: {
                 options: {
                     "globals": {
-                        bootzooka: false,
+                        hreg: false,
                         angular: false,
                         $: false,
                         jQuery: false

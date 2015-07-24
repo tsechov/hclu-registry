@@ -1,7 +1,7 @@
 /**
  * Link 2 form fields and force matching
  */
-angular.module('smlBootzooka.common.directives').directive('bsMatch', function () {
+angular.module('smlHreg.common.directives').directive('bsMatch', function () {
     return {
         require: 'ngModel',
         restrict: 'A',

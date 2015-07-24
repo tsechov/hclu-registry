@@ -14,20 +14,20 @@ jetty/bin/jetty.sh stop
 rm jetty/logs/*
 
 # update source code
-cd bootzooka
+cd hreg
 git pull
 
 # wait 5 sec
 sleep 5
 
 # copy configuration file to proper location
-cp /home/bootstrap/bootzooka/application.conf /home/bootstrap/bootzooka/bootzooka/bootzooka-rest/src/main/resources/
+cp /home/bootstrap/hreg/application.conf /home/bootstrap/hreg/hreg/hreg-rest/src/main/resources/
 
 # package
 sbt compile package
 
 # deploy
-cp bootzooka-ui/target/scala-2.10/bootzooka.war ../jetty/webapps/
+cp hreg-ui/target/scala-2.10/hreg.war ../jetty/webapps/
 
 # start jetty
 cd ../

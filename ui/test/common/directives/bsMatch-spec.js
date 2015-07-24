@@ -4,7 +4,7 @@ describe('Match directive', function () {
 
     var scope, form, elm;
 
-    beforeEach(module('smlBootzooka.common.directives'));
+    beforeEach(module('smlHreg.common.directives'));
 
     beforeEach(inject(function ($rootScope, $compile) {
         elm = angular.element(

@@ -2,7 +2,7 @@
 
 describe('Flash Service', function () {
 
-    beforeEach(module('smlBootzooka.notifications'));
+    beforeEach(module('smlHreg.notifications'));
 
     var scope, NotificationsService;
 

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.session').controller('UserSessionCtrl', function UserSessionCtrl($scope, UserSessionService) {
+angular.module('smlHreg.session').controller('UserSessionCtrl', function UserSessionCtrl($scope, UserSessionService) {
 
     $scope.getLoggedUserName = function () {
         return UserSessionService.getLoggedUserName();

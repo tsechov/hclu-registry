@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.profile').controller('ProfileCtrl', function ProfileCtrl($q, $scope, ProfileService, NotificationsService, user, UserSessionService) {
+angular.module('smlHreg.profile').controller('ProfileCtrl', function ProfileCtrl($q, $scope, ProfileService, NotificationsService, user, UserSessionService) {
     $scope.user = {
         login: user.login,
         email: user.email

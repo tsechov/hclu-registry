@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.notifications')
+angular.module('smlHreg.notifications')
     .directive('bsNotifications', function () {
 
         function isValidNotificationsSource(notificationsSource) {

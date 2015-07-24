@@ -1,14 +1,14 @@
 'use strict';
 
-angular.module('smlBootzooka.common.directives', []);
-angular.module('smlBootzooka.common.filters', []);
-angular.module('smlBootzooka.common.services', []);
-angular.module('smlBootzooka.common', ['smlBootzooka.common.filters', 'smlBootzooka.common.directives', 'smlBootzooka.common.services']);
-angular.module('smlBootzooka.notifications', []);
-angular.module('smlBootzooka.version', []);
-angular.module('smlBootzooka.session', ['ngCookies', 'ngResource']);
-var smlBootzooka = angular.module('smlBootzooka', ['smlBootzooka.templates', 'smlBootzooka.profile', 'smlBootzooka.session', 'smlBootzooka.common', 'smlBootzooka.notifications', 'smlBootzooka.version', 'ngSanitize', 'ui.router']);
-var profile = angular.module('smlBootzooka.profile', ['ui.router', 'smlBootzooka.session', 'smlBootzooka.common', 'smlBootzooka.notifications']);
+angular.module('smlHreg.common.directives', []);
+angular.module('smlHreg.common.filters', []);
+angular.module('smlHreg.common.services', []);
+angular.module('smlHreg.common', ['smlHreg.common.filters', 'smlHreg.common.directives', 'smlHreg.common.services']);
+angular.module('smlHreg.notifications', []);
+angular.module('smlHreg.version', []);
+angular.module('smlHreg.session', ['ngCookies', 'ngResource']);
+var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router']);
+var profile = angular.module('smlHreg.profile', ['ui.router', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications']);
 
 profile.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');
@@ -55,7 +55,7 @@ profile.config(function ($stateProvider, $urlRouterProvider) {
         });
 });
 
-smlBootzooka.config(function ($stateProvider, $urlRouterProvider) {
+smlHreg.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/error404');
 
     $stateProvider
@@ -76,7 +76,7 @@ smlBootzooka.config(function ($stateProvider, $urlRouterProvider) {
         });
 });
 
-smlBootzooka.config(['$httpProvider', function ($httpProvider) {
+smlHreg.config(['$httpProvider', function ($httpProvider) {
     var interceptor = ['$rootScope', '$q', '$injector', '$log', 'NotificationsService', function ($rootScope, $q, $injector, $log, NotificationsService) {
 
         function redirectToState(stateName) {
@@ -119,7 +119,7 @@ smlBootzooka.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.interceptors.push(interceptor);
 }]);
 
-smlBootzooka.run(function ($rootScope, UserSessionService, FlashService, $state) {
+smlHreg.run(function ($rootScope, UserSessionService, FlashService, $state) {
 
     function requireAuth(targetState) {
         return targetState && targetState.data && targetState.data.auth;
@@ -145,7 +145,7 @@ smlBootzooka.run(function ($rootScope, UserSessionService, FlashService, $state)
     });
 });
 
-smlBootzooka.run(function ($rootScope, $timeout, FlashService, NotificationsService) {
+smlHreg.run(function ($rootScope, $timeout, FlashService, NotificationsService) {
     $rootScope.$on('$stateChangeSuccess', function () {
         var message = FlashService.get();
         NotificationsService.showInfo(message);

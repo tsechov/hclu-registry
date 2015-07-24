@@ -1,10 +1,10 @@
 import java.util.Locale
 import javax.servlet.ServletContext
 
-import com.softwaremill.bootzooka.Beans
-import com.softwaremill.bootzooka.common.logging.AsyncErrorReportingLogAppender
-import com.softwaremill.bootzooka.api._
-import com.softwaremill.bootzooka.api.swagger.SwaggerServlet
+import hclu.hreg.Beans
+import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
+import hclu.hreg.api._
+import hclu.hreg.api.swagger.SwaggerServlet
 import org.scalatra.{LifeCycle, ScalatraServlet}
 
 /**

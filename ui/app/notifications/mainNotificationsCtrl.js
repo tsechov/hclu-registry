@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.notifications')
+angular.module('smlHreg.notifications')
     .controller('MainNotificationsCtrl', function MainNotificationsCtrl($scope, NotificationsService) {
 
         $scope.notificationsService = NotificationsService;

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.profile').factory('RegisterService', function ($http, $q, FlashService) {
+angular.module('smlHreg.profile').factory('RegisterService', function ($http, $q, FlashService) {
 
     var registerService = {};
 

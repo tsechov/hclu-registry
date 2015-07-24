@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlBootzooka.session').factory('UserSessionService', function ($http, $rootScope, $log, $window) {
+angular.module('smlHreg.session').factory('UserSessionService', function ($http, $rootScope, $log, $window) {
 
     var loggedUser = null;
     var target = null;

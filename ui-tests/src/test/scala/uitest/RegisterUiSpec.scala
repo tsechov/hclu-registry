@@ -1,7 +1,7 @@
 package uitest
 
 import com.jayway.awaitility.scala.AwaitilitySupport
-import com.softwaremill.bootzooka.common.Utils
+import hclu.hreg.common.Utils
 import org.fest.assertions.Assertions._
 import org.scalatest.BeforeAndAfterEach
 import uitest.pages.RegistrationPage
@@ -12,7 +12,7 @@ class RegisterUiSpec extends BaseUiSpec with AwaitilitySupport with BeforeAndAft
   val Email = Login + "@example.org"
   val Password = "test"
 
-  final val EmailSubject = s"SoftwareMill Bootzooka - registration confirmation for user $Login"
+  final val EmailSubject = s"SoftwareMill Hreg - registration confirmation for user $Login"
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

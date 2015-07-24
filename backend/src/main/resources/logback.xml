@@ -10,7 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.softwaremill.bootzooka" level="DEBUG" additivity="false">
+    <logger name="hclu.hreg" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
