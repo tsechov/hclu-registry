@@ -21,7 +21,7 @@ before_install:
   - echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
   - apt-get install -y oracle-java8-installer
   - curl -sLO https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.8/sbt-launch.jar && mkdir -p ~/bin && mv ./sbt-launch.jar ~/bin
-  - echo -e '#!/bin/bash\nSBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M"\njava $SBT_OPTS -jar `dirname $0`/sbt-launch.jar "$@"' > ~/bin/sbt
+  - echo -e '#!/bin/bash\nSBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled"\njava $SBT_OPTS -jar `dirname $0`/sbt-launch.jar "$@"' > ~/bin/sbt
   - chmod u+x ~/bin/sbt
   - sbt --version
 
