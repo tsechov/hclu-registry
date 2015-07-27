@@ -24,8 +24,9 @@ before_install:
   - echo -e '#!/bin/bash\nSBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled"\njava $SBT_OPTS -jar `dirname $0`/sbt-launch.jar "$@"' > ~/bin/sbt
   - chmod u+x ~/bin/sbt
 
-
+install:
+  - cd ui && npm install
+  - cd ui && grunt bower:install
 
 script:
-  - cd ui && npm install && bower install
   - sbt test
