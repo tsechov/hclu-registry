@@ -27,4 +27,6 @@ before_install:
 
 
 script:
+  - npm install
+  - bower install
   - sbt test
