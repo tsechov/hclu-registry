@@ -28,4 +28,4 @@ install:
   - cd ui && npm install && bower --allow-root install
 
 script:
-  - sbt test
+  - pwd && sbt test
