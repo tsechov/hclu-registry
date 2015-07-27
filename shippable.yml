@@ -16,6 +16,7 @@ before_install:
   - node --version
   - npm --version
   - npm install -g grunt-cli bower
+  - sbt --version
 
 
 script:
