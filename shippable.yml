@@ -26,7 +26,7 @@ before_install:
 
 install:
   - cd ui && npm install
-  - cd ui && grunt bower:install
+  - cd ui && bower --allow-root install
 
 script:
   - sbt test
