@@ -1,7 +1,7 @@
 package hclu.hreg.api
 
 import hclu.hreg.common.StringJsonWrapper
-import hclu.hreg.service.data.UserJson
+import hclu.hreg.service.model.UserJson
 import hclu.hreg.service.user.UserService
 import org.scalatra._
 import org.scalatra.swagger.{StringResponseMessage, Swagger, SwaggerSupport}

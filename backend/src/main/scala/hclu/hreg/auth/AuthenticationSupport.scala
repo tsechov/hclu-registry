@@ -5,7 +5,7 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import hclu.hreg.auth.AuthOps._
 import hclu.hreg.common.{StringJsonWrapper, Utils}
 import hclu.hreg.api.Halting
-import hclu.hreg.service.data.UserJson
+import hclu.hreg.service.model.UserJson
 import hclu.hreg.service.user.UserService
 import org.scalatra._
 import org.scalatra.auth.ScentryAuthStore.CookieAuthStore

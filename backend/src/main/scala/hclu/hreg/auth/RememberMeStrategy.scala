@@ -4,7 +4,7 @@ import org.scalatra.{CookieOptions, Cookie, ScalatraBase}
 import org.scalatra.auth.ScentryStrategy
 import hclu.hreg.common.Utils
 import hclu.hreg.service.user.UserService
-import hclu.hreg.service.data.UserJson
+import hclu.hreg.service.model.UserJson
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import scala.concurrent.Await

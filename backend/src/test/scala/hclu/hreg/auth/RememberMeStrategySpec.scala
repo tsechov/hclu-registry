@@ -4,7 +4,7 @@ import java.util.UUID
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import hclu.hreg.api.UsersServlet
-import hclu.hreg.service.data.UserJson
+import hclu.hreg.service.model.UserJson
 import hclu.hreg.service.user.UserService
 import hclu.hreg.test.UserTestHelpers
 import org.mockito.BDDMockito._

@@ -5,7 +5,7 @@ import java.util.UUID
 import hclu.hreg.common.{Clock, Utils}
 import hclu.hreg.dao.UserDao
 import hclu.hreg.domain.User
-import hclu.hreg.service.data.UserJson
+import hclu.hreg.service.model.UserJson
 import hclu.hreg.service.email.EmailService
 import hclu.hreg.service.templates.EmailTemplatingEngine
 
