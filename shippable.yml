@@ -25,7 +25,7 @@ before_install:
   - chmod u+x ~/bin/sbt
 
 install:
-  - cd ui && npm install && bower --allow-root install
+  - cd ui && npm install && bower --allow-root install && cd ..
 
 script:
-  - pwd && sbt test
+  - sbt test
