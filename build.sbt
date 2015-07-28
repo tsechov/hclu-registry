@@ -78,7 +78,7 @@ lazy val commonSettings = scalariformSettings ++ Seq(
     .setPreference(PreserveSpaceBeforeArguments, true)
     .setPreference(CompactControlReadability, true)
     .setPreference(SpacesAroundMultiImports, false),
-  organization := "io.drain",
+  organization := "io.drain.hreg",
   version := (version in ThisBuild).value,
   releaseNextVersion := {
     ver => Version(ver).map(versionBump(_).asSnapshot.string).getOrElse(versionFormatError)
