@@ -1,11 +1,11 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import sbt._
-import Keys._
 import com.earldouglas.xsbtwebplugin.PluginKeys._
-import sbt.ScalaVersion
 import com.earldouglas.xsbtwebplugin.WebPlugin.webSettings
+import sbt.Keys._
+import sbt.{ScalaVersion, _}
+import sbtrelease._
 
 import scala.util.Try
 import scalariform.formatter.preferences._
@@ -78,13 +78,23 @@ lazy val commonSettings = scalariformSettings ++ Seq(
     .setPreference(PreserveSpaceBeforeArguments, true)
     .setPreference(CompactControlReadability, true)
     .setPreference(SpacesAroundMultiImports, false),
-  organization := "com.softwaremill",
-  version := "0.0.1-SNAPSHOT",
+  organization := "io.drain",
+  version := (version in ThisBuild).value,
+  releaseNextVersion := {
+    ver => Version(ver).map(versionBump(_).asSnapshot.string).getOrElse(versionFormatError)
+  },
+  publishMavenStyle := true,
   scalaVersion := "2.11.6",
   scalacOptions ++= Seq("-unchecked", "-deprecation"),
   classpathTypes ~= (_ + "orbit"),
   libraryDependencies ++= commonDependencies
 )
+
+def versionBump(version: Version) = sys.props.get("versionBump") match {
+  case Some("major") => version.bumpMajor
+  case Some("minor") => version.bumpMinor
+  case _ => version.bumpBugfix
+}
 
 def haltOnCmdResultError(result: Int) {
   if (result != 0) {
@@ -108,6 +118,7 @@ def gruntTask(taskName: String) = (baseDirectory, streams) map { (bd, s) =>
 
 lazy val rootProject = (project in file("."))
   .settings(commonSettings: _*)
+  .settings(publish := {})
   .aggregate(backend, ui, dist)
 
 lazy val backend: Project = (project in file("backend"))
@@ -143,13 +154,16 @@ lazy val backend: Project = (project in file("backend"))
         IO.touch(target.value / "compilationFinished")
 
         compilationResult
-      }
+      },
+      publish := {}
     )
   )
 
 lazy val ui = (project in file("ui"))
   .settings(commonSettings: _*)
+  .settings(publish := {})
   .settings(test in Test <<= (test in Test) dependsOn gruntTask("test"))
+
 
 lazy val dist = (project in file("dist"))
   .settings(commonSettings: _*)
@@ -160,9 +174,17 @@ lazy val dist = (project in file("dist"))
     // We need to include the whole webapp, hence replacing the resource directory
     unmanagedResourceDirectories in Compile <<= baseDirectory { bd => {
       List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
-    } },
+    }
+    },
     assemblyJarName in assembly := "hreg.jar",
-    assembly <<= assembly dependsOn gruntTask("build")
+    assembly <<= assembly dependsOn gruntTask("build"),
+    bintrayOrganization := Some("drain-io"),
+
+    bintrayRepository := "maven",
+
+
+    licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+
   ) dependsOn(ui, backend)
 
 lazy val uiTests = (project in file("ui-tests"))
