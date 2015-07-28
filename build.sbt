@@ -119,7 +119,7 @@ def gruntTask(taskName: String) = (baseDirectory, streams) map { (bd, s) =>
 lazy val rootProject = (project in file("."))
   .settings(commonSettings: _*)
   .settings(publish := {})
-  .aggregate(backend, ui, dist)
+  .aggregate(backend, ui, hreg)
 
 lazy val backend: Project = (project in file("backend"))
   .enablePlugins(BuildInfoPlugin)
@@ -165,7 +165,7 @@ lazy val ui = (project in file("ui"))
   .settings(test in Test <<= (test in Test) dependsOn gruntTask("test"))
 
 
-lazy val dist = (project in file("dist"))
+lazy val hreg = (project in file("hreg"))
   .settings(commonSettings: _*)
   .settings(DeployToHeroku.settings: _*)
   .settings(
@@ -181,7 +181,7 @@ lazy val dist = (project in file("dist"))
     bintrayOrganization := Some("drain-io"),
 
     bintrayRepository := "maven",
-
+    bintrayPackage := "hclu-registry",
 
     licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
@@ -193,6 +193,6 @@ lazy val uiTests = (project in file("ui-tests"))
     parallelExecution := false,
     libraryDependencies ++= seleniumStack ++ Seq(awaitility, jettyTest, servletApiProvided),
     test in Test <<= (test in Test) dependsOn (Keys.`package` in Compile in backend)
-  ) dependsOn dist
+  ) dependsOn hreg
 
 RenameProject.settings
