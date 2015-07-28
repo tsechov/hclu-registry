@@ -87,7 +87,8 @@ lazy val commonSettings = scalariformSettings ++ Seq(
   scalaVersion := "2.11.6",
   scalacOptions ++= Seq("-unchecked", "-deprecation"),
   classpathTypes ~= (_ + "orbit"),
-  libraryDependencies ++= commonDependencies
+  libraryDependencies ++= commonDependencies,
+  licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 )
 
 def versionBump(version: Version) = sys.props.get("versionBump") match {
@@ -118,7 +119,10 @@ def gruntTask(taskName: String) = (baseDirectory, streams) map { (bd, s) =>
 
 lazy val rootProject = (project in file("."))
   .settings(commonSettings: _*)
-  .settings(publish := {})
+  .settings(
+    publish := {},
+    bintrayUnpublish := {}
+  )
   .aggregate(backend, ui, hreg)
 
 lazy val backend: Project = (project in file("backend"))
@@ -155,13 +159,17 @@ lazy val backend: Project = (project in file("backend"))
 
         compilationResult
       },
-      publish := {}
+      publish := {},
+      bintrayUnpublish := {}
     )
   )
 
 lazy val ui = (project in file("ui"))
   .settings(commonSettings: _*)
-  .settings(publish := {})
+  .settings(
+    publish := {},
+    bintrayUnpublish := {}
+  )
   .settings(test in Test <<= (test in Test) dependsOn gruntTask("test"))
 
 
@@ -176,14 +184,19 @@ lazy val hreg = (project in file("hreg"))
       List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
     }
     },
-    assemblyJarName in assembly := "hreg.jar",
+    //assemblyJarName in assembly := "hreg.jar",
+    artifact in (assembly) := {
+      val art = (artifact in (Compile, assembly)).value
+      art.copy(`classifier` = Some("assembly"))
+    },
+    addArtifact(artifact in (assembly), assembly),
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
 
     bintrayRepository := "maven",
-    bintrayPackage := "hclu-registry",
+    bintrayPackage := "hclu-registry"
 
-    licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+
 
   ) dependsOn(ui, backend)
 
