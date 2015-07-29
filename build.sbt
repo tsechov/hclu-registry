@@ -194,11 +194,7 @@ lazy val hreg = (project in file("hreg"))
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
     bintrayRepository := "maven",
-    bintrayPackage := "hclu-registry",
-
-
-
-
+    bintrayPackage := "hclu-registry"
 
   ) dependsOn(ui, backend)
 
