@@ -5,6 +5,7 @@ import com.earldouglas.xsbtwebplugin.PluginKeys._
 import com.earldouglas.xsbtwebplugin.WebPlugin.webSettings
 import sbt.Keys._
 import sbt.{ScalaVersion, _}
+import sbtdocker.DockerPlugin.autoImport._
 import sbtrelease._
 
 import scala.util.Try
@@ -69,6 +70,9 @@ lazy val seleniumStack = Seq(seleniumJava, seleniumFirefox, fest)
 // As provided implies test, so is enough here.
 lazy val servletApiProvided = "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided" artifacts Artifact("javax.servlet", "jar", "jar")
 
+
+
+
 name := "hreg"
 
 // factor out common settings into a sequence
@@ -78,6 +82,7 @@ lazy val commonSettings = scalariformSettings ++ Seq(
     .setPreference(PreserveSpaceBeforeArguments, true)
     .setPreference(CompactControlReadability, true)
     .setPreference(SpacesAroundMultiImports, false),
+
   organization := "io.drain.hreg",
   version := (version in ThisBuild).value,
   releaseNextVersion := {
@@ -176,26 +181,56 @@ lazy val ui = (project in file("ui"))
 lazy val hreg = (project in file("hreg"))
   .settings(commonSettings: _*)
   .settings(DeployToHeroku.settings: _*)
+  .enablePlugins(sbtdocker.DockerPlugin)
   .settings(
     libraryDependencies += jetty,
     mainClass in assembly := Some("hclu.hreg.AppRunner"),
     // We need to include the whole webapp, hence replacing the resource directory
     unmanagedResourceDirectories in Compile <<= baseDirectory { bd => {
-        List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
-      }
+      List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
+    }
     },
 
     artifact in (assembly) := {
-      val art = (artifact in(assembly)).value
+      val art = (artifact in (assembly)).value
       art.copy(`classifier` = Some("assembly"))
     },
     addArtifact(artifact in (assembly), assembly),
+
+
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
     bintrayRepository := "generic",
-    bintrayPackage := "hclu-registry"
+    bintrayPackage := "hclu-registry",
+
+
+    docker <<= (docker dependsOn assembly),
+
+    dockerfile in docker := {
+      val jarFile = (assemblyOutputPath in assembly).value
+      val appDirPath = "/app"
+      val jarTargetPath = s"$appDirPath/${jarFile.name}"
+
+      new Dockerfile {
+        from("drainio/server:1.0")
+        add(jarFile, jarTargetPath)
+        workDir(appDirPath)
+        expose(8080)
+        entryPoint("java", "-jar", jarTargetPath)
+      }
+    },
+
+    imageNames in docker := Seq(
+      ImageName(namespace = Some("drainio"),
+        repository = name.value,
+        tag = Some(version.value))),
+
+    buildOptions in docker := BuildOptions(cache = false)
+
 
   ) dependsOn(ui, backend)
+
+
 
 lazy val uiTests = (project in file("ui-tests"))
   .settings(commonSettings: _*)
@@ -206,3 +241,6 @@ lazy val uiTests = (project in file("ui-tests"))
   ) dependsOn hreg
 
 RenameProject.settings
+
+
+

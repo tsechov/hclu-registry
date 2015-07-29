@@ -12,5 +12,7 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.0")
 
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
 
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.2.0")
+
 // for DeployToHeroku task
 libraryDependencies += "com.heroku.sdk" % "heroku-deploy" % "0.4.3"
