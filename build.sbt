@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import bintry.Attr
 import com.earldouglas.xsbtwebplugin.PluginKeys._
 import com.earldouglas.xsbtwebplugin.WebPlugin.webSettings
 import sbt.Keys._
@@ -184,7 +185,7 @@ lazy val hreg = (project in file("hreg"))
       List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
     }
     },
-    //assemblyJarName in assembly := "hreg.jar",
+    assemblyJarName in assembly := "hreg.jar",
     artifact in (assembly) := {
       val art = (artifact in (Compile, assembly)).value
       art.copy(`classifier` = Some("assembly"))
@@ -192,9 +193,10 @@ lazy val hreg = (project in file("hreg"))
     addArtifact(artifact in (assembly), assembly),
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
-
     bintrayRepository := "maven",
-    bintrayPackage := "hclu-registry"
+    bintrayPackage := "hclu-registry",
+
+
 
 
 
