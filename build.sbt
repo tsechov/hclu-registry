@@ -1,7 +1,6 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import bintry.Attr
 import com.earldouglas.xsbtwebplugin.PluginKeys._
 import com.earldouglas.xsbtwebplugin.WebPlugin.webSettings
 import sbt.Keys._
@@ -182,18 +181,18 @@ lazy val hreg = (project in file("hreg"))
     mainClass in assembly := Some("hclu.hreg.AppRunner"),
     // We need to include the whole webapp, hence replacing the resource directory
     unmanagedResourceDirectories in Compile <<= baseDirectory { bd => {
-      List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
-    }
+        List(bd.getParentFile / backend.base.getName / "src" / "main", bd.getParentFile / ui.base.getName / "dist")
+      }
     },
-    assemblyJarName in assembly := "hreg.jar",
+
     artifact in (assembly) := {
-      val art = (artifact in (Compile, assembly)).value
+      val art = (artifact in(assembly)).value
       art.copy(`classifier` = Some("assembly"))
     },
     addArtifact(artifact in (assembly), assembly),
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
-    bintrayRepository := "maven",
+    bintrayRepository := "generic",
     bintrayPackage := "hclu-registry"
 
   ) dependsOn(ui, backend)
