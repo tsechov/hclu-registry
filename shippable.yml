@@ -30,5 +30,5 @@ before_install:
 script:
   - sbt hreg/assembly
 after_script:
-  - cp hreg/target/scala_2.11/hreg.jar shippable/buildoutput
+  - cp hreg/target/scala-2.11/hreg.jar shippable/buildoutput
 
