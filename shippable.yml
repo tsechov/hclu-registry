@@ -14,7 +14,6 @@ before_install:
   - mkdir -p shippable/buildoutput
 
 script:
-  - pwd && export
   - cd ui && npm install && bower --allow-root install && cd ..
   - sbt hreg/assembly
 after_script:

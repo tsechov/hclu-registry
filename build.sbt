@@ -141,7 +141,13 @@ lazy val backend: Project = (project in file("backend"))
     buildInfoKeys := Seq[BuildInfoKey](
       BuildInfoKey.action("buildDate")(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())),
       // if the build is done outside of a git repository, we still want it to succeed
-      BuildInfoKey.action("buildSha")(Try(Process("git rev-parse HEAD").!!.stripLineEnd).getOrElse("?"))),
+      BuildInfoKey.action("buildSha")(Try(Process("git rev-parse HEAD").!!.stripLineEnd).getOrElse("?")),
+      BuildInfoKey.action("version")((version in ThisBuild).value),
+      BuildInfoKey.action("branch")(Try(Process("git rev-parse --abbrev-ref HEAD").!!.stripLineEnd).getOrElse("?")),
+      BuildInfoKey.action("buildNumber")(sys.env.get("BUILD_NUMBER").getOrElse("?")),
+      BuildInfoKey.action("buildUrl")(sys.env.get("BUILD_URL").getOrElse("?"))),
+
+      buildInfoOptions += BuildInfoOption.ToJson,
     Seq(
       artifactName := { (config: ScalaVersion, module: ModuleID, artifact: Artifact) =>
         "hreg." + artifact.extension // produces nice war name -> http://stackoverflow.com/questions/8288859/how-do-you-remove-the-scala-version-postfix-from-artifacts-builtpublished-wi
