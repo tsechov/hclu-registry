@@ -28,3 +28,4 @@ before_install:
 
 script:
   - sbt test
+  - sbt docker
