@@ -8,7 +8,7 @@ node_js:
 
 jdk:
    - oraclejdk8
-
+commit_tag: blah
 before_install:
   - mkdir -p shippable/testresults
   - mkdir -p shippable/buildoutput
