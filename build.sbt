@@ -191,11 +191,12 @@ lazy val hreg = (project in file("hreg"))
     }
     },
 
-    artifact in (assembly) := {
-      val art = (artifact in (assembly)).value
-      art.copy(`classifier` = Some("assembly"))
-    },
-    addArtifact(artifact in (assembly), assembly),
+//    artifact in (assembly) := {
+//      val art = (artifact in (assembly)).value
+//      art.copy(`classifier` = Some("assembly"))
+//    },
+    assemblyJarName in assembly := "hreg.jar",
+    //addArtifact(artifact in (assembly), assembly),
 
 
     assembly <<= assembly dependsOn gruntTask("build"),

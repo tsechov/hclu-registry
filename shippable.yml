@@ -11,6 +11,7 @@ jdk:
 
 before_install:
   - mkdir -p shippable/testresults
+  - mkdir -p shippable/buildoutput
   - sudo apt-get -y install libfontconfig man
   - source ~/.nvm/nvm.sh && nvm install 0.12.2
   - node --version
@@ -27,5 +28,7 @@ before_install:
   - sbt clean
 
 script:
-  - sbt test
-  - sbt docker
+  - sbt hreg/assembly
+after_script:
+  - cp hreg/target/scala_2.11/hreg.jar shippable/buildoutput
+
