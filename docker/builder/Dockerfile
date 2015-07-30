@@ -31,3 +31,19 @@ RUN \
     /bin/echo -e '#!/bin/bash\nSBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled"\njava $SBT_OPTS -jar `dirname $0`/sbt-launch.jar "$@"' > /usr/local/bin/sbt && \
     chmod 755 /usr/local/bin/sbt && \
     sbt clean
+
+ENV NVM_DIR /root/.nvm
+ENV NODE_VERSION 0.12.2
+
+# Install nvm with node and npm
+RUN \
+    . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/v$NODE_VERSION/bin:$PATH
+
+RUN npm install -g grunt-cli bower
+
