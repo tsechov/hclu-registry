@@ -14,8 +14,9 @@ before_install:
   - mkdir -p shippable/buildoutput
 
 script:
+  - pwd && export
   - cd ui && npm install && bower --allow-root install && cd ..
   - sbt hreg/assembly
-after_script:
+after_success:
   - cp hreg/target/scala-2.11/hreg.jar shippable/buildoutput
 
