@@ -1,10 +1,12 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import bintry.Attr
 import com.earldouglas.xsbtwebplugin.PluginKeys._
 import com.earldouglas.xsbtwebplugin.WebPlugin.webSettings
 import sbt.Keys._
 import sbt.{ScalaVersion, _}
+import sbtassembly.AssemblyPlugin.autoImport._
 import sbtdocker.DockerPlugin.autoImport._
 import sbtrelease._
 
@@ -108,6 +110,14 @@ def haltOnCmdResultError(result: Int) {
   }
 }
 
+lazy val buildSha = Try(Process("git rev-parse HEAD").!!.stripLineEnd).toOption
+lazy val branch = Try(Process("git rev-parse --abbrev-ref HEAD").!!.stripLineEnd).toOption
+lazy val buildUrl = sys.env.get("BUILD_URL")
+lazy val buildNumber = sys.env.get("BUILD_NUMBER")
+lazy val gitDirty = Try("git diff --shortstat" #| "wc -l" !!).toOption.map(_ != "0")
+
+
+
 val updateNpm = baseDirectory map { bd =>
   println("Updating NPM dependencies")
   haltOnCmdResultError(Process("npm install", bd / ".." / "ui") !)
@@ -141,13 +151,13 @@ lazy val backend: Project = (project in file("backend"))
     buildInfoKeys := Seq[BuildInfoKey](
       BuildInfoKey.action("buildDate")(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())),
       // if the build is done outside of a git repository, we still want it to succeed
-      BuildInfoKey.action("buildSha")(Try(Process("git rev-parse HEAD").!!.stripLineEnd).getOrElse("?")),
+      BuildInfoKey.action("buildSha")(buildSha.getOrElse("?")),
       BuildInfoKey.action("version")((version in ThisBuild).value),
-      BuildInfoKey.action("branch")(Try(Process("git rev-parse --abbrev-ref HEAD").!!.stripLineEnd).getOrElse("?")),
-      BuildInfoKey.action("buildNumber")(sys.env.get("BUILD_NUMBER").getOrElse("?")),
-      BuildInfoKey.action("buildUrl")(sys.env.get("BUILD_URL").getOrElse("?"))),
+      BuildInfoKey.action("branch")(branch.getOrElse("?")),
+      BuildInfoKey.action("buildNumber")(buildNumber.getOrElse("?")),
+      BuildInfoKey.action("buildUrl")(buildUrl.getOrElse("?"))),
 
-      buildInfoOptions += BuildInfoOption.ToJson,
+    buildInfoOptions += BuildInfoOption.ToJson,
     Seq(
       artifactName := { (config: ScalaVersion, module: ModuleID, artifact: Artifact) =>
         "hreg." + artifact.extension // produces nice war name -> http://stackoverflow.com/questions/8288859/how-do-you-remove-the-scala-version-postfix-from-artifacts-builtpublished-wi
@@ -197,18 +207,52 @@ lazy val hreg = (project in file("hreg"))
     }
     },
 
-//    artifact in (assembly) := {
-//      val art = (artifact in (assembly)).value
-//      art.copy(`classifier` = Some("assembly"))
-//    },
-    assemblyJarName in assembly := "hreg.jar",
-    //addArtifact(artifact in (assembly), assembly),
+    artifact in (assembly) := {
+      val art = (artifact in (assembly)).value
+      art.copy(`classifier` = Some("assembly"))
+    },
+    //    assemblyJarName in assembly := "hreg.jar",
+    addArtifact(artifact in (assembly), assembly),
+    //    def copy(finder: PathFinder, dst: File) = {
+    //      IO.copy(finder.get map {f => (f, dst / f.getName)})
+    //    }
 
+    assembly <<= assembly map { artifactFile: File =>
+
+      IO.copyFile(artifactFile, new File(artifactFile.getParent + "/hreg.jar"))
+      // post-compile work
+
+      artifactFile
+    },
 
     assembly <<= assembly dependsOn gruntTask("build"),
     bintrayOrganization := Some("drain-io"),
     bintrayRepository := "generic",
     bintrayPackage := "hclu-registry",
+    bintrayVersionAttributes := {
+      val sv = Map("scala_version" -> Seq(Attr.String(scalaVersion.value)))
+
+      val attrs = Map(
+        "build_url" -> buildUrl,
+        "build_number" -> buildNumber,
+        "build_sha" -> buildSha.map(_.take(7)),
+        "branch" -> branch,
+        "commit_url" -> buildSha.map("https://github.com/tsechov/hclu-registry/commit/" + _.take(7)),
+        "git_dirty" -> gitDirty.map(_.toString)
+      )
+
+      println("gitDirty: " + gitDirty)
+
+      sv ++ attrs.collect {
+        case (key, value) if (value.isDefined) => (key, Seq(Attr.String(value.get)))
+      }
+
+      //      buildUrl.foldLeft(sv) { (m, u) =>
+      //        m ++ Map("build_url" -> Seq(Attr.String(u)))
+      //      }
+
+
+    },
 
 
     docker <<= (docker dependsOn assembly),
