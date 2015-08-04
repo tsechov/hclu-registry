@@ -16,6 +16,8 @@ env:
 before_install:
   - mkdir -p shippable/testresults
   - mkdir -p shippable/buildoutput
+  - heroku status && heroku plugins:install https://github.com/heroku/heroku-deploy
+
 
 script:
   - echo "machine api.heroku.com" >> ~/.netrc
@@ -23,7 +25,6 @@ script:
   - echo "password $HEROKU_API_KEY" >> ~/.netrc
   - chmod 600 ~/.netrc
   - cd ui && npm install && bower --allow-root install && cd ..
-  - heroku
   - sbt backend/package
 after_success:
   - mkdir -p target/tmp && cp backend/target/scala-2.11/hreg.war target/tmp && cd target/tmp
