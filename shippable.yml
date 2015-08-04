@@ -22,9 +22,9 @@ script:
   - echo "login $HEROKU_USER" >> ~/.netrc
   - echo "password $HEROKU_API_KEY" >> ~/.netrc
   - chmod 600 ~/.netrc
-  - heroku auth:whoami
+  - export PATH=/root/.nvm/versions/v0.12.2/bin:/usr/bin:$PATH
   - pwd && export
-  - export PATH=/root/.nvm/versions/v0.12.2/bin:$PATH
+  - heroku auth:whoami
   - cd ui && npm install && bower --allow-root install && cd ..
   - sbt hreg/assembly
 after_success:
