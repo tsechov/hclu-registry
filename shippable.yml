@@ -24,6 +24,7 @@ script:
   - chmod 600 ~/.netrc
   - export PATH=/root/.nvm/versions/v0.12.2/bin:/usr/bin:$PATH
   - pwd && export
+  - ls -la /usr/bin
   - heroku auth:whoami
   - cd ui && npm install && bower --allow-root install && cd ..
   - sbt hreg/assembly
