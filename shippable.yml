@@ -1,3 +1,4 @@
+sudo: false
 language: scala
 scala:
     - 2.11.6
@@ -14,6 +15,7 @@ before_install:
 
 script:
   - pwd && export
+  - export PATH=/root/.nvm/versions/v0.12.2/bin:$PATH
   - cd ui && npm install && bower --allow-root install && cd ..
   - sbt hreg/assembly
 after_success:
