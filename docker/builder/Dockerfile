@@ -47,3 +47,6 @@ ENV PATH      $NVM_DIR/versions/v$NODE_VERSION/bin:$PATH
 
 RUN npm install -g grunt-cli bower
 
+RUN wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+RUN heroku status
+
