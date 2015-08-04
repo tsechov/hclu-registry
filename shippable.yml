@@ -17,6 +17,7 @@ before_install:
   - mkdir -p shippable/testresults
   - mkdir -p shippable/buildoutput
   - heroku status && heroku plugins:install https://github.com/heroku/heroku-deploy
+  - sbt update
 
 
 script:
