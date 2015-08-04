@@ -49,4 +49,5 @@ RUN npm install -g grunt-cli bower
 
 RUN wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 RUN heroku status
+RUN heroku plugins:install https://github.com/heroku/heroku-deploy
 

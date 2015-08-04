@@ -180,6 +180,7 @@ lazy val backend: Project = (project in file("backend"))
 
         compilationResult
       },
+      assembly <<= assembly dependsOn (packageWar in DefaultConf),
       publish := {},
       bintrayUnpublish := {}
     )
@@ -226,6 +227,7 @@ lazy val hreg = (project in file("hreg"))
     },
 
     assembly <<= assembly dependsOn gruntTask("build"),
+
     bintrayOrganization := Some("drain-io"),
     bintrayRepository := "generic",
     bintrayPackage := "hclu-registry",

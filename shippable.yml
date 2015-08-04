@@ -22,12 +22,10 @@ script:
   - echo "login $HEROKU_USER" >> ~/.netrc
   - echo "password $HEROKU_API_KEY" >> ~/.netrc
   - chmod 600 ~/.netrc
-  - export PATH=/root/.nvm/versions/v0.12.2/bin:/usr/bin:$PATH
-  - pwd && export
-  - ls -la /usr/bin
-  - heroku auth:whoami
   - cd ui && npm install && bower --allow-root install && cd ..
-  - sbt hreg/assembly
+  - sbt backend/package
 after_success:
-  - cp hreg/target/scala-2.11/hreg.jar shippable/buildoutput
+  - mkdir -p target/tmp && cp backend/target/scala-2.11/hreg.war target/tmp && cd target/tmp
+  - heroku deploy:war --war hreg.war --app hreg-dev
+
 
