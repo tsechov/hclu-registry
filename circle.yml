@@ -7,9 +7,8 @@ machine:
     version: oraclejdk8
 
 dependencies:
-  pre:
-    - rvm gemset use global && gem install rhc
   override:
+    - rvm gemset use global && gem install rhc
 
 
 test:
