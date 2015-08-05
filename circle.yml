@@ -8,8 +8,8 @@ machine:
 
 dependencies:
   override:
-    - sudo rvm gemset use global
-    - sudo gem install rhc
+    - rvm gemset use global && gem install rhc
+
 
 
 deployment:
