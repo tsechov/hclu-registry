@@ -1,0 +1,10 @@
+test:
+  pre:
+    - export BUILD_NUMBER=${CIRCLE_BUILD_NUM}
+    - export BUILD_URL=https://circleci.com/gh/tsechov/hclu-registry/${CIRCLE_BUILD_NUM}
+
+deployment:
+  dev:
+    branch: master
+    commands:
+      - rhc scp -l ${OPENSHIFT_USER} -p ${OPENSHIFT_PASSWORD} hreg upload backend/target/scala-2.11/hreg.war app-root/dependencies/jbossews/webapps/ROOT.war
