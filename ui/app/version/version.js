@@ -8,6 +8,7 @@ angular.module('smlHreg.version').factory('Version', function () {
         this.version = data.version;
         this.branch = data.branch;
         this.buildNumber = data.buildNumber;
+        this.buildUrl = data.buildUrl;
     };
 
     Version.prototype.getBuildSha = function () {
@@ -28,6 +29,10 @@ angular.module('smlHreg.version').factory('Version', function () {
 
     Version.prototype.getBuildNumber = function () {
         return this.buildNumber;
+    };
+
+    Version.prototype.getBuildUrl = function () {
+        return this.buildUrl;
     };
 
     return Version;

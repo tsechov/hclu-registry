@@ -8,5 +8,6 @@ angular.module('smlHreg.version').controller('VersionCtrl', function VersionCtrl
         $scope.version = version.getVersion();
         $scope.branch = version.getBranch();
         $scope.buildNumber = version.getBuildNumber();
+        $scope.buildUrl = version.getBuildUrl();
     });
 });
