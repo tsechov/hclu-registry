@@ -9,6 +9,7 @@ machine:
 dependencies:
   pre:
     - rvm gemset use global && gem install rhc
+  override:
 
 
 test:
