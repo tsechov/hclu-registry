@@ -4,7 +4,7 @@ machine:
     BUILD_URL: https://circleci.com/gh/tsechov/hclu-registry/${CIRCLE_BUILD_NUM}
 
   java:
-    version: openjdk8
+    version: oraclejdk8
 
 dependencies:
   override:
