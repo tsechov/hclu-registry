@@ -1,7 +1,10 @@
-test:
-  pre:
-    - export BUILD_NUMBER=${CIRCLE_BUILD_NUM}
-    - export BUILD_URL=https://circleci.com/gh/tsechov/hclu-registry/${CIRCLE_BUILD_NUM}
+machine:
+  environment:
+    BUILD_NUMBER: ${CIRCLE_BUILD_NUM}
+    BUILD_URL: https://circleci.com/gh/tsechov/hclu-registry/${CIRCLE_BUILD_NUM}
+
+  java:
+    version: openjdk8
 
 deployment:
   dev:
