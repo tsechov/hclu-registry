@@ -5,6 +5,7 @@ import hclu.hreg.Beans
 import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
 import hclu.hreg.api._
 import hclu.hreg.api.swagger.SwaggerServlet
+import hclu.hreg.version.BuildInfo
 import org.scalatra.{LifeCycle, ScalatraServlet}
 
 /**
@@ -35,6 +36,9 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     mountServlet(new SwaggerServlet)
 
     context.setAttribute("appObject", this)
+
+    logger.info("\nStarted HREG [{}]\nwith DB: {}", BuildInfo, sqlDatabase)
+
   }
 
   override def destroy(context: ServletContext) {
