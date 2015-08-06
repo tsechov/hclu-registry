@@ -1,9 +1,10 @@
 package hclu.hreg.service
 
 import java.util.UUID
-import hclu.hreg.dao.{UserDao, PasswordResetCodeDao}
+import com.typesafe.config.ConfigFactory
+import hclu.hreg.dao.{DatabaseConfig, UserDao, PasswordResetCodeDao}
 import hclu.hreg.domain.{PasswordResetCode, User}
-import hclu.hreg.service.config.CoreConfig
+import hclu.hreg.service.config.{EmailConfig, CoreConfig}
 import hclu.hreg.service.email.EmailService
 import hclu.hreg.service.templates.{EmailContentWithSubject, EmailTemplatingEngine}
 import hclu.hreg.test.UserTestHelpers
@@ -178,5 +179,14 @@ class PasswordRecoveryServiceSpec extends FlatSpec with scalatest.Matchers with 
       verify(codeDao).remove(mockCode)
       verify(userDao, never()).changePassword(any[UUID], anyString)
     })
+  }
+
+  "resettemplate" should "handle context" in {
+    lazy val config = new CoreConfig with EmailConfig with DatabaseConfig {
+      override def rootConfig = ConfigFactory.load()
+    }
+
+    println(config.resetLinkPattern)
+
   }
 }
