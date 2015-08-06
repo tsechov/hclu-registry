@@ -7,8 +7,9 @@ angular.module('smlHreg.common', ['smlHreg.common.filters', 'smlHreg.common.dire
 angular.module('smlHreg.notifications', []);
 angular.module('smlHreg.version', []);
 angular.module('smlHreg.session', ['ngCookies', 'ngResource']);
-var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router']);
+var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router', 'smlHreg.userlist']);
 var profile = angular.module('smlHreg.profile', ['ui.router', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications']);
+angular.module('smlHreg.userlist',[]);
 
 profile.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');
@@ -52,7 +53,8 @@ profile.config(function ($stateProvider, $urlRouterProvider) {
             data: {
                 auth: true
             }
-        });
+        })
+        ;
 });
 
 smlHreg.config(function ($stateProvider, $urlRouterProvider) {
@@ -73,6 +75,10 @@ smlHreg.config(function ($stateProvider, $urlRouterProvider) {
         .state('home', {
             url: '/',
             templateUrl: 'common/public.html'
+        }).state('userlist', {
+            url: '/userlist',
+            controller: 'UserListCtrl',
+            templateUrl: 'users/list/userlist.html'
         });
 });
 

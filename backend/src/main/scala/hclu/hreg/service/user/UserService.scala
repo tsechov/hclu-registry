@@ -48,7 +48,10 @@ class UserService(
 
   def findByEmail(email: String): Future[Option[UserJson]] = userDao.findByEmail(email.toLowerCase).map(toUserJson)
 
+  def findAll = userDao.findAll.map(toUserJson)
+
   private def toUserJson(userOpt: Option[User]) = userOpt.map(UserJson(_))
+  private def toUserJson(users: Seq[User]) = users.map(UserJson(_))
 
   def isUserDataValid(loginOpt: Option[String], emailOpt: Option[String], passwordOpt: Option[String]): Boolean = {
     registrationDataValidator.isDataValid(loginOpt, emailOpt, passwordOpt)

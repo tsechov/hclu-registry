@@ -181,12 +181,4 @@ class PasswordRecoveryServiceSpec extends FlatSpec with scalatest.Matchers with 
     })
   }
 
-  "resettemplate" should "handle context" in {
-    lazy val config = new CoreConfig with EmailConfig with DatabaseConfig {
-      override def rootConfig = ConfigFactory.load()
-    }
-
-    println(config.resetLinkPattern)
-
-  }
 }

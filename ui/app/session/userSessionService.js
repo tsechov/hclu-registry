@@ -24,6 +24,10 @@ angular.module('smlHreg.session').factory('UserSessionService', function ($http,
         return angular.isObject(loggedUser);
     };
 
+    userSessionService.isAdmin = function () {
+        return userSessionService.isLogged() && loggedUser.login === 'admin';
+    };
+
     userSessionService.isNotLogged = function () {
         return !userSessionService.isLogged();
     };
@@ -84,6 +88,7 @@ angular.module('smlHreg.session').factory('UserSessionService', function ($http,
 
     $rootScope.isLogged = userSessionService.isLogged;
     $rootScope.isNotLogged = userSessionService.isNotLogged;
+    $rootScope.isAdmin = userSessionService.isAdmin;
 
     return userSessionService;
 });

@@ -35,6 +35,11 @@ class UsersServlet(val userService: UserService)(override implicit val swagger: 
     NoContent()
   }
 
+  get("/list", operation(list)) {
+    haltIfNotAuthenticated()
+    userService.findAll
+  }
+
   post("/register", operation(register)) {
     if (!userService.isUserDataValid(loginOpt, emailOpt, passwordOpt)) {
       haltWithBadRequest("Wrong user data!")
@@ -207,9 +212,9 @@ object UsersServlet {
       )
     )
 
-    protected val getAll = (
-      apiOperation[List[UserJson]]("getAll")
-      summary "Get all users"
+    protected val list = (
+      apiOperation[List[UserJson]]("list")
+      summary "Lists all users"
       responseMessages (
         StringResponseMessage(200, "OK"),
         StringResponseMessage(401, "User not logged in")

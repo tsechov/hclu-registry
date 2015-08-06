@@ -3,6 +3,7 @@ package hclu.hreg.dao
 import java.util.UUID
 
 import hclu.hreg.common.FutureHelpers._
+import hclu.hreg.common.Pagination
 import hclu.hreg.dao.sql.SqlDatabase
 import hclu.hreg.domain.User
 import org.joda.time.DateTime
@@ -40,6 +41,16 @@ class UserDao(protected val database: SqlDatabase)(implicit val ec: ExecutionCon
     users.filter(condition).result.headOption
   }
 
+  private def findWhereAction(condition: Users => Rep[Boolean], pagination: Option[Pagination] = None) = pagination match {
+    case Some(page) => {
+      val offset = (page.pageNumber - 1) * page.pageSize
+      users.filter(condition).drop(offset).take(page.pageSize).result
+    }
+    case _ => users.filter(condition).result
+  }
+
+  private def findAllWithId = db.run(findWhereAction(_.id.?.isDefined))
+
   private def findByEmailAction(email: String) = findOneWhereAction(_.email.toLowerCase === email.toLowerCase)
 
   private def findByLowerCasedLoginAction(login: String) = findOneWhereAction(_.loginLowerCase === login.toLowerCase)
@@ -54,11 +65,15 @@ class UserDao(protected val database: SqlDatabase)(implicit val ec: ExecutionCon
 
   def findByLoginOrEmail(loginOrEmail: String) = {
     findByLowerCasedLogin(loginOrEmail).flatMap(userOpt =>
-      userOpt.map(user => Future { Some(user) }).getOrElse(findByEmail(loginOrEmail)))
+      userOpt.map(user => Future {
+        Some(user)
+      }).getOrElse(findByEmail(loginOrEmail)))
   }
 
   def findByToken(token: String) =
     findOneWhere(_.token === token)
+
+  def findAll = findAllWithId
 
   def changePassword(userId: UserId, newPassword: String): Future[Unit] = {
     db.run(users.filter(_.id === userId).map(_.password).update(newPassword)).mapToUnit
@@ -91,17 +106,25 @@ trait SqlUserSchema {
 
   protected class Users(tag: Tag) extends Table[User](tag, "users") {
     // format: OFF
-    def id              = column[UUID]("id", O.PrimaryKey)
-    def login           = column[String]("login")
-    def loginLowerCase  = column[String]("login_lowercase")
-    def email           = column[String]("email")
-    def password        = column[String]("password")
-    def salt            = column[String]("salt")
-    def token           = column[String]("token")
-    def createdOn       = column[DateTime]("created_on")
+    def id = column[UUID]("id", O.PrimaryKey)
+
+    def login = column[String]("login")
+
+    def loginLowerCase = column[String]("login_lowercase")
+
+    def email = column[String]("email")
+
+    def password = column[String]("password")
+
+    def salt = column[String]("salt")
+
+    def token = column[String]("token")
+
+    def createdOn = column[DateTime]("created_on")
 
     def * = (id, login, loginLowerCase, email, password, salt, token, createdOn) <>
       ((User.apply _).tupled, User.unapply)
+
     // format: ON
   }
 

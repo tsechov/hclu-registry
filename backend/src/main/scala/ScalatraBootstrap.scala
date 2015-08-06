@@ -1,12 +1,16 @@
-import java.util.Locale
+import java.util.{UUID, Locale}
 import javax.servlet.ServletContext
 
 import hclu.hreg.Beans
+import hclu.hreg.common.Utils
 import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
 import hclu.hreg.api._
 import hclu.hreg.api.swagger.SwaggerServlet
+import hclu.hreg.domain.User
 import hclu.hreg.version.BuildInfo
 import org.scalatra.{LifeCycle, ScalatraServlet}
+
+import scala.concurrent.Future
 
 /**
  * This is the ScalatraBootstrap bootstrap file. You can use it to mount servlets or
@@ -38,6 +42,15 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     context.setAttribute("appObject", this)
 
     logger.info("\nStarted HREG [{}]\nwith DB: {}", BuildInfo, sqlDatabase)
+
+    val salt = Utils.randomString(128)
+    val token = UUID.randomUUID().toString
+    val now = clock.nowUtc
+    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID("admin", "admin@drain.io", "xxx", salt, token, now))
+
+    userCreatation.onSuccess {
+      case _ => logger.info("Admin added")
+    }
 
   }
 

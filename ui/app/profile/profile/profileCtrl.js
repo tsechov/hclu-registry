@@ -29,7 +29,7 @@ angular.module('smlHreg.profile').controller('ProfileCtrl', function ProfileCtrl
                 UserSessionService.updateEmail($scope.user.email);
                 NotificationsService.showSuccess('Email changed!');
                 $scope.profileForm.email.$dirty = false;
-                $scope.profileForm.email.$pristine = true;
+                    $scope.profileForm.email.$pristine = true;
             });
         }
     };

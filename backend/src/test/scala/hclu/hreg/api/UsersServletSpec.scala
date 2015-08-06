@@ -270,4 +270,22 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
       }
     })
   }
+
+  "GET /list" should "fetch all the users" in {
+    onServletWithMocks(userService => {
+      session {
+        //authenticate to perform change
+        post("/", mapToJson(Map("login" -> "admin", "password" -> "pass")), defaultJsonHeaders) {
+          status should be (200)
+        }
+
+        get("/list"){
+          status should be (200)
+          body should include (""""login":"Admin","email":"admin@sml.com","token":"token1","createdOn":"20150603T132503.000Z"}""")
+          body should include (""""login":"Admin2","email":"admin2@sml.com","token":"token2","createdOn":"20150603T132503.000Z"}""")
+        }
+
+      }
+    })
+  }
 }
