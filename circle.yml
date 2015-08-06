@@ -9,7 +9,6 @@ machine:
 dependencies:
   cache_directories:
     - ~/.sbt
-    - ~/.ivy2
   override:
     - sbt test:compile
     - rvm gemset use global && gem install rhc
