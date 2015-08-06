@@ -11,7 +11,7 @@ dependencies:
     - ~/.sbt
     - ~/.ivy2
   override:
-    - sbt compile:test
+    - sbt test:compile
     - rvm gemset use global && gem install rhc
 
 
