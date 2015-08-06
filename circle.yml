@@ -7,7 +7,11 @@ machine:
     version: oraclejdk8
 
 dependencies:
+  cache_directories:
+    - ~/.sbt
+    - ~/.ivy2
   override:
+    - sbt compile:test
     - rvm gemset use global && gem install rhc
 
 
@@ -23,4 +27,4 @@ deployment:
   dev:
     branch: master
     commands:
-      - rhc scp -l ${OPENSHIFT_USER} -p ${OPENSHIFT_PASSWORD} hreg upload backend/target/scala-2.11/hreg.war app-root/dependencies/jbossews/webapps/ROOT.war
+      - rhc scp -l ${OPENSHIFT_USER} -p ${OPENSHIFT_PASSWORD} hregdev upload backend/target/scala-2.11/hreg.war app-root/dependencies/jbossews/webapps/ROOT.war
