@@ -45,7 +45,7 @@ class PasswordRecoveryServiceSpec extends FlatSpec with scalatest.Matchers with 
   def prepareUserDaoMock = {
     val userDao = mock[UserDao]
     when (userDao.findByLoginOrEmail(validLogin)) thenReturn Future {
-      Some(newUser(validLogin, "user@sml.pl", "pass", "salt", "token"))
+      Some(newUser(validLogin, "user@sml.pl", "pass", "salt", "token", "first", "last"))
     }
     when (userDao.findByLoginOrEmail(invalidLogin)) thenReturn Future { None }
     userDao
@@ -117,7 +117,7 @@ class PasswordRecoveryServiceSpec extends FlatSpec with scalatest.Matchers with 
       val login = "login"
       val password = "password"
       val salt = "salt"
-      val user = newUser(login, s"$login@example.com", password, salt, "someRandomToken")
+      val user = newUser(login, s"$login@example.com", password, salt, "someRandomToken", "first", "last")
       val resetCode = PasswordResetCode(UUID.randomUUID(), code, user, new DateTime().plusHours(1))
 
       given(codeDao.load(code)) willReturn Future { Some(resetCode) }
@@ -143,7 +143,7 @@ class PasswordRecoveryServiceSpec extends FlatSpec with scalatest.Matchers with 
       val login = "login"
       val password = "password"
       val salt = "salt"
-      val user = newUser(login, s"$login@example.com", password, salt, "someRandomToken")
+      val user = newUser(login, s"$login@example.com", password, salt, "someRandomToken", "first", "last")
       val resetCode = PasswordResetCode(UUID.randomUUID(), code, user, new DateTime().minusHours(1))
 
       given(codeDao.load(code)) willReturn Future { Some(resetCode) }

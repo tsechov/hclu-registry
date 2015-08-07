@@ -18,8 +18,8 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
 
   def onServletWithMocks(testToExecute: (UserService) => Unit) = {
     val dao = new UserDao(sqlDatabase)
-    dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1"))
-    dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2"))
+    dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1", "first1", "last1"))
+    dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2", "first2", "last2"))
 
     val userService = spy(new UserService(dao, new RegistrationDataValidator(), new DummyEmailService(), new EmailTemplatingEngine))
 
@@ -32,9 +32,9 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
   "POST /register" should "register new user" in {
     onServletWithMocks {
       (userService) =>
-        post("/register", mapToJson(Map("login" -> "newUser", "email" -> "newUser@sml.com", "password" -> "secret")),
+        post("/register", mapToJson(Map("login" -> "newUser", "email" -> "newUser@sml.com", "password" -> "secret", "firstname" -> "first", "lastname" -> "last")),
           defaultJsonHeaders) {
-          verify(userService).registerNewUser("newUser", "newUser@sml.com", "secret")
+          verify(userService).registerNewUser("newUser", "newUser@sml.com", "secret", "first", "last")
           status should be (201)
         }
     }
@@ -92,8 +92,8 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
   "POST /register" should "use escaped Strings" in {
     onServletWithMocks {
       (userService) =>
-        post("/register", mapToJson(Map("login" -> "<script>alert('haxor');</script>", "email" -> "newUser@sml.com", "password" -> "secret")), defaultJsonHeaders) {
-          verify(userService).registerNewUser("&lt;script&gt;alert('haxor');&lt;/script&gt;", "newUser@sml.com", "secret")
+        post("/register", mapToJson(Map("login" -> "<script>alert('haxor');</script>", "email" -> "newUser@sml.com", "password" -> "secret", "firstname" -> "first", "lastname" -> "last")), defaultJsonHeaders) {
+          verify(userService).registerNewUser("&lt;script&gt;alert('haxor');&lt;/script&gt;", "newUser@sml.com", "secret", "first", "last")
         }
     }
   }

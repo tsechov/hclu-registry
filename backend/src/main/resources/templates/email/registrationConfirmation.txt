@@ -1,4 +1,4 @@
-SoftwareMill Hreg - registration confirmation for user {{userName}}
+HCLU Hreg - registration confirmation for user {{userName}}
 Dear {{userName}},
 
 Thank you for registering in our application.

@@ -26,7 +26,7 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
       val salt = "salt" + i
       val token = "token" + i
       userDao.add(User(randomIds(i - 1), login, login.toLowerCase, i + "email@sml.com", password, salt, token,
-        createdOn))
+        createdOn, s"first${i}", s"last${i}", true))
         .futureValue
     }
   }
@@ -37,7 +37,7 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
     val email = "newemail@sml.com"
 
     // When
-    userDao.add(newUser(login, email, "pass", "salt", "token")).futureValue
+    userDao.add(newUser(login, email, "pass", "salt", "token", "first", "last")).futureValue
 
     // Then
     userDao.findByEmail(email).futureValue should be ('defined)
@@ -48,10 +48,10 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
     val login = "newuser"
     val email = "anotherEmaill@sml.com"
 
-    userDao.add(newUser(login, "somePrefix" + email, "somePass", "someSalt", "someToken")).futureValue
+    userDao.add(newUser(login, "somePrefix" + email, "somePass", "someSalt", "someToken", "someFirst", "someLast")).futureValue
 
     // When & then
-    userDao.add(newUser(login, email, "pass", "salt", "token")).failed.futureValue.getMessage should equal(
+    userDao.add(newUser(login, email, "pass", "salt", "token", "first", "last")).failed.futureValue.getMessage should equal(
       "User with given e-mail or login already exists"
     )
   }
@@ -61,10 +61,10 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
     val login = "anotherUser"
     val email = "newemail@sml.com"
 
-    userDao.add(newUser("somePrefixed" + login, email, "somePass", "someSalt", "someToken")).futureValue
+    userDao.add(newUser("somePrefixed" + login, email, "somePass", "someSalt", "someToken", "someFirst", "someLast")).futureValue
 
     // When & then
-    userDao.add(newUser(login, email, "pass", "salt", "token")).failed.futureValue.getMessage should equal(
+    userDao.add(newUser(login, email, "pass", "salt", "token", "first", "last")).failed.futureValue.getMessage should equal(
       "User with given e-mail or login already exists"
     )
   }

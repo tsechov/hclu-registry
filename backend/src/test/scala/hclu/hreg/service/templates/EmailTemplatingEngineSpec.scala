@@ -31,7 +31,7 @@ class EmailTemplatingEngineSpec extends FlatSpec with Matchers {
     val email = engine.registrationConfirmation("adamw")
 
     // then
-    email.subject should be ("SoftwareMill Hreg - registration confirmation for user adamw")
+    email.subject should be ("HCLU Hreg - registration confirmation for user adamw")
     email.content should include ("Dear adamw,")
     email.content should include ("Regards,")
   }

@@ -15,7 +15,10 @@ case class User(
   password: String,
   salt: String,
   token: String,
-  createdOn: DateTime
+  createdOn: DateTime,
+  firstname: String,
+  lastname: String,
+  active: Boolean
 )
 
 object User {
@@ -26,10 +29,13 @@ object User {
     plainPassword: String,
     salt: String,
     token: String,
-    createdOn: DateTime
+    createdOn: DateTime,
+    firstname: String,
+    lastname: String,
+    active: Boolean = true
   ): User =
     User(UUID.randomUUID(), login, login.toLowerCase, email, encryptPassword(plainPassword, salt), salt, token,
-      createdOn)
+      createdOn, firstname, lastname, active)
 
   def encryptPassword(password: String, salt: String): String = {
     // 10k iterations takes about 10ms to encrypt a password on a 2013 MacBook

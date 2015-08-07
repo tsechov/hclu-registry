@@ -48,13 +48,15 @@ class UsersServlet(val userService: UserService)(override implicit val swagger: 
       val paramLogin = login
       val paramPass = password
       val paramEmail = email // these values have to be extracted before
+      val paramFirstname = firstname
+      val paramLastname = lastname
       new AsyncResult {
         val is = userService.checkUserExistenceFor(paramLogin, paramEmail).flatMap {
           case Left(error) =>
             Future { haltWithConflict(error) }
           case _ =>
             val loginEscaped = scala.xml.Utility.escape(paramLogin)
-            userService.registerNewUser(loginEscaped, paramEmail, paramPass).map(
+            userService.registerNewUser(loginEscaped, paramEmail, paramPass, paramFirstname, paramLastname).map(
               _ => Created(StringJsonWrapper("success"))
             )
         }
@@ -78,8 +80,11 @@ class UsersServlet(val userService: UserService)(override implicit val swagger: 
   }
 
   private def emailOpt: Option[String] = (parsedBody \ "email").extractOpt[String]
+  private def namePartOpt(part: String): Option[String] = (parsedBody \ part).extractOpt[String]
 
   def email: String = valueOrEmptyString(emailOpt)
+  def firstname: String = valueOrEmptyString(namePartOpt("firstname"))
+  def lastname: String = valueOrEmptyString(namePartOpt("lastname"))
 
   patch("/", operation(update)) {
     haltIfNotAuthenticated()

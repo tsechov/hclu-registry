@@ -22,8 +22,8 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
   def prepareUserDaoMock: UserDao = {
     val dao = new UserDao(sqlDatabase)
     Future.sequence(Seq(
-      dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1")),
-      dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2"))
+      dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1", "first1", "last1")),
+      dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2", "first2", "last2"))
     )).futureValue
     dao
   }
@@ -96,7 +96,7 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
     given(emailService.scheduleEmail(any(), any())).willReturn(Future {})
 
     // When
-    userService.registerNewUser("John", "newUser@sml.com", "password").futureValue
+    userService.registerNewUser("John", "newUser@sml.com", "password", "first", "last").futureValue
 
     // Then
     val userOpt: Option[User] = userDao.findByLowerCasedLogin("John").futureValue
@@ -113,7 +113,7 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
   "registerNewUser" should "not schedule an email on existing login" in {
     // When
     try {
-      userService.registerNewUser("Admin", "secondEmail@sml.com", "password").futureValue
+      userService.registerNewUser("Admin", "secondEmail@sml.com", "password", "first", "last").futureValue
     }
     catch {
       case e: Exception =>

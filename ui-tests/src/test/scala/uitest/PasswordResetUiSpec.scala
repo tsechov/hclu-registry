@@ -10,7 +10,7 @@ class PasswordResetUiSpec extends BaseUiSpec {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    registerUserIfNotExists("someUser", "some-user@example.com", "somePass") foreach { _ =>
+    registerUserIfNotExists("someUser", "some-user@example.com", "somePass", "first1", "last1") foreach { _ =>
       beans.userDao.findByLoginOrEmail("someUser").futureValue foreach { user =>
         val passResetCode = PasswordResetCode(validCode, user)
         beans.codeDao.add(passResetCode).futureValue

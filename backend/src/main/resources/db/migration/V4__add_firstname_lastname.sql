@@ -1,0 +1,2 @@
+ALTER TABLE "users" ADD "firstname" VARCHAR NOT NULL DEFAULT '';
+ALTER TABLE "users" ADD "lastname" VARCHAR NOT NULL DEFAULT '';

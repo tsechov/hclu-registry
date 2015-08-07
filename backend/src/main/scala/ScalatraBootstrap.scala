@@ -1,11 +1,11 @@
-import java.util.{UUID, Locale}
+import java.util.{Locale, UUID}
 import javax.servlet.ServletContext
 
 import hclu.hreg.Beans
-import hclu.hreg.common.Utils
-import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
 import hclu.hreg.api._
 import hclu.hreg.api.swagger.SwaggerServlet
+import hclu.hreg.common.Utils
+import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
 import hclu.hreg.domain.User
 import hclu.hreg.version.BuildInfo
 import org.scalatra.{LifeCycle, ScalatraServlet}
@@ -46,7 +46,7 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     val salt = Utils.randomString(128)
     val token = UUID.randomUUID().toString
     val now = clock.nowUtc
-    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID("admin", "admin@drain.io", "xxx", salt, token, now))
+    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID("admin", "admin@drain.io", "xxx", salt, token, now, "admin", "admin"))
 
     userCreatation.onSuccess {
       case _ => logger.info("Admin added")

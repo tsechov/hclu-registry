@@ -40,8 +40,8 @@ class BaseUiSpec extends FunSuite with EmbeddedJetty with BeforeAndAfterAll with
   override def beforeAll() {
     startJetty()
     beans = context.getAttribute("appObject").asInstanceOf[Beans]
-    registerUserIfNotExists(RegUser, RegMail, RegPass)
-    registerUserIfNotExists("1" + RegUser, "1" + RegMail, RegPass)
+    registerUserIfNotExists(RegUser, RegMail, RegPass, "first1", "last1")
+    registerUserIfNotExists("1" + RegUser, "1" + RegMail, RegPass, "first2", "last2")
     emailService = beans.emailService.asInstanceOf[DummyEmailService]
   }
 
@@ -51,10 +51,10 @@ class BaseUiSpec extends FunSuite with EmbeddedJetty with BeforeAndAfterAll with
    * @return boolean value (wrapped within scala.util.Try) indicating
    *         if new user was created or an existing user was found
    */
-  protected def registerUserIfNotExists(login: String, email: String, pass: String): Try[Boolean] = Try {
+  protected def registerUserIfNotExists(login: String, email: String, pass: String, firstname: String, lastname: String): Try[Boolean] = Try {
     val userService = beans.userService
     if (userService.findByLogin(login).futureValue.isEmpty) {
-      userService.registerNewUser(login, email, pass).futureValue
+      userService.registerNewUser(login, email, pass, firstname, lastname).futureValue
       true
     }
     false

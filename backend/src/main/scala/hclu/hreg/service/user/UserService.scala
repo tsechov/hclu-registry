@@ -24,11 +24,11 @@ class UserService(
     userDao.load(userId).map(toUserJson)
   }
 
-  def registerNewUser(login: String, email: String, password: String): Future[Unit] = {
+  def registerNewUser(login: String, email: String, password: String, firstname: String, lastname: String): Future[Unit] = {
     val salt = Utils.randomString(128)
     val token = UUID.randomUUID().toString
     val now = clock.nowUtc
-    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID(login, email.toLowerCase, password, salt, token, now))
+    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID(login, email.toLowerCase, password, salt, token, now, firstname, lastname))
     userCreatation.onSuccess {
       case _ =>
         val confirmationEmail = emailTemplatingEngine.registrationConfirmation(login)
