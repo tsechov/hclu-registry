@@ -12,6 +12,6 @@ class MainPageUiSpec extends BaseUiSpec {
     mainPage.open()
 
     // then
-    Assertions.assertThat(mainPage.getVersionString).isEqualTo(s"Build $buildSha, $buildDate")
+    Assertions.assertThat(mainPage.getVersionString).isEqualTo(s"Build[${buildSha.take(7)}, $buildDate, $version, $branch, $buildNumber]")
   }
 }
