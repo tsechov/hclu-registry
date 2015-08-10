@@ -10,7 +10,7 @@ dependencies:
   cache_directories:
     - ~/.sbt
   override:
-    - sbt test:compile
+    - sbt update
     - rvm gemset use global && gem install rhc
 
 
