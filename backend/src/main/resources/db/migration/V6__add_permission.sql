@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD "permission" INTEGER NOT NULL DEFAULT 0;

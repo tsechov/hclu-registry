@@ -75,8 +75,8 @@ smlHreg.config(function ($stateProvider, $urlRouterProvider) {
         .state('home', {
             url: '/',
             templateUrl: 'common/public.html'
-        }).state('userlist', {
-            url: '/userlist',
+        }).state('users', {
+            url: '/users',
             controller: 'UserListCtrl',
             templateUrl: 'users/list/userlist.html'
         });

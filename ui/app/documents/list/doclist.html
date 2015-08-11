@@ -1,0 +1,29 @@
+<h2>Users</h2>
+
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>username</th>
+            <th>email</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in users">
+            <td>{{user.login}}</td>
+            <td>{{user.email}}</td>
+            <td>
+                <button type="button" class="btn btn-default" ng-click="edit(user)" disabled>
+                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                </button>
+                <button type="button" class="btn btn-danger" disabled>
+                    <span class="glyphicon glyphicon-trash"></span> Delete
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
