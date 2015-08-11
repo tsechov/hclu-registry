@@ -10,6 +10,7 @@ angular.module('smlHreg.session', ['ngCookies', 'ngResource']);
 var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router', 'smlHreg.userlist']);
 var profile = angular.module('smlHreg.profile', ['ui.router', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications']);
 angular.module('smlHreg.userlist',[]);
+angular.module('smlHreg.doclist',[]);
 
 profile.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');
