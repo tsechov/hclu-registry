@@ -11,5 +11,7 @@ trait Daos {
 
   lazy val codeDao = new PasswordResetCodeDao(sqlDatabase)
 
+  lazy val docDao = new DocDao(sqlDatabase)
+
   def sqlDatabase: SqlDatabase
 }

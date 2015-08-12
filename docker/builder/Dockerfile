@@ -43,8 +43,7 @@ RUN \
     && nvm use default
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/v$NODE_VERSION/bin:$PATH
-
+ENV PATH      $NVM_DIR/versions/v$NODE_VERSION/bin:$P
 RUN npm install -g grunt-cli bower
 
 RUN wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh

@@ -28,13 +28,13 @@ class UserService(
     val salt = Utils.randomString(128)
     val token = UUID.randomUUID().toString
     val now = clock.nowUtc
-    val userCreatation: Future[Unit] = userDao.add(User.withRandomUUID(login, email.toLowerCase, password, salt, token, now, firstname, lastname))
-    userCreatation.onSuccess {
+    val userCreation: Future[Unit] = userDao.add(User.withRandomUUID(login, email.toLowerCase, password, salt, token, now, firstname, lastname))
+    userCreation.onSuccess {
       case _ =>
         val confirmationEmail = emailTemplatingEngine.registrationConfirmation(login)
         emailService.scheduleEmail(email, confirmationEmail)
     }
-    userCreatation
+    userCreation
   }
 
   def authenticate(login: String, nonEncryptedPassword: String): Future[Option[UserJson]] = {
