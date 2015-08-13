@@ -17,7 +17,7 @@ dependencies:
 test:
   override:
     - sbt backend/package
-    - sbt uiTests/test
+#    - sbt uiTests/test
   post:
     - cp backend/target/scala-2.11/hreg.war $CIRCLE_ARTIFACTS
 
