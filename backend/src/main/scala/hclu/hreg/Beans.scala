@@ -6,6 +6,7 @@ import hclu.hreg.dao.sql.SqlDatabase
 import hclu.hreg.dao.{DatabaseConfig, Daos}
 import hclu.hreg.service.PasswordRecoveryService
 import hclu.hreg.service.config.{CoreConfig, EmailConfig}
+import hclu.hreg.service.doc.DocService
 import hclu.hreg.service.email.{DummyEmailService, SmtpEmailService}
 import hclu.hreg.service.templates.EmailTemplatingEngine
 import hclu.hreg.service.user.{RegistrationDataValidator, UserService}
@@ -48,6 +49,8 @@ trait Beans extends LazyLogging with Daos {
     emailTemplatingEngine,
     config
   )
+
+  lazy val docService = new DocService(docDao)
 
   lazy val errorReporter = BugsnagErrorReporter(config)
 

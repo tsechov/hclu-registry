@@ -1,10 +1,10 @@
 package hclu.hreg.api
 
-import java.util.Date
+import java.util.{Date, UUID}
 import javax.servlet.http.HttpServletResponse
 
-import hclu.hreg.api.serializers.{RequestLogger, DateTimeSerializer, UuidSerializer}
 import com.typesafe.scalalogging.LazyLogging
+import hclu.hreg.api.serializers.{DateTimeSerializer, RequestLogger, UuidSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.{JValueResult, NativeJsonSupport}
@@ -43,12 +43,21 @@ abstract class JsonServlet extends ScalatraServlet with RequestLogger with Nativ
     response.addHeader("Pragma", "no-cache")
   }
 
+  case class ErrorResponse(msg: String, id: UUID = UUID.randomUUID()) {
+    def xHeader = Map("X-Hreg-Error-Id" -> id.toString)
+  }
+
   errorHandler = {
-    case t: Exception =>
-      {
-        logger.error("Exception during client request processing", t)
-      }
-      halt(500, "Internal server exception")
+    case t: org.json4s.MappingException => {
+      val error = ErrorResponse("Request parsing error")
+      logger.info(error.toString, t)
+      halt(BadRequest(error, error.xHeader))
+    }
+    case t: Exception => {
+      val error = ErrorResponse("Request processing error")
+      logger.error(error.toString, t)
+      halt(InternalServerError(error, error.xHeader))
+    }
   }
 
 }

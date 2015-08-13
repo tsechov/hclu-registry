@@ -36,6 +36,7 @@ class ScalatraBootstrap extends LifeCycle with Beans {
 
     mountServlet(new UsersServlet(userService))
     mountServlet(new PasswordRecoveryServlet(passwordRecoveryService, userService))
+    mountServlet(new DocsServlet(docService, userService))
     mountServlet(new VersionServlet)
     mountServlet(new SwaggerServlet)
 

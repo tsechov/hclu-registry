@@ -13,10 +13,10 @@ class SwaggerServlet(implicit val swagger: Swagger) extends ScalatraServlet with
 object AppSwagger {
 
   val Info = ApiInfo(
-    "Web API",
+    "HCLU Registry Web API",
     "Docs for the web API",
-    "http://hreg.softwaremill.com",
-    "hello@softwaremill.com",
+    "http://hreg.drain.io",
+    "info@drain.io",
     "Apache License, Version 2.0",
     "http://www.apache.org/licenses/LICENSE-2.0.html"
   )

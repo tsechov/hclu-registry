@@ -29,4 +29,8 @@ class DocService(docDao: DocDao)(implicit ec: ExecutionContext, clock: Clock) {
     docDao.add(doc).map((id, _))
 
   }
+
+  def findByRegId(regId: Int): Future[Option[Doc]] = {
+    docDao.findByRegId(regId)
+  }
 }

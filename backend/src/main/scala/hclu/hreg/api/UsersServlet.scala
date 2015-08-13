@@ -41,6 +41,7 @@ class UsersServlet(val userService: UserService)(override implicit val swagger: 
   }
 
   post("/register", operation(register)) {
+    haltIfNotAuthenticated()
     if (!userService.isUserDataValid(loginOpt, emailOpt, passwordOpt)) {
       haltWithBadRequest("Wrong user data!")
     }
@@ -190,6 +191,7 @@ object UsersServlet {
       responseMessages (
         StringResponseMessage(201, "Created"),
         StringResponseMessage(400, "Wrong user data"),
+        StringResponseMessage(401, "User not logged in"),
         StringResponseMessage(409, "Login or e-mail already exists")
       )
     )
