@@ -88,3 +88,5 @@ code {
     border: 0;
     margin-right: 10px;
 }
+
+.required:after { content:" *"; }

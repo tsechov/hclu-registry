@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('smlHreg.doclist').controller('DocListCtrl', function UserListCtrl($q, $scope, UserListService) {
+angular.module('smlHreg.doclist').controller('DocListCtrl', function DocListCtrl($q, $scope, UserListService) {
 
 
     UserListService.get().then(function (users) {

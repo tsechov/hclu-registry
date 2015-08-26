@@ -7,10 +7,11 @@ angular.module('smlHreg.common', ['smlHreg.common.filters', 'smlHreg.common.dire
 angular.module('smlHreg.notifications', []);
 angular.module('smlHreg.version', []);
 angular.module('smlHreg.session', ['ngCookies', 'ngResource']);
-var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router', 'smlHreg.userlist']);
+var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications', 'smlHreg.version', 'ngSanitize', 'ui.router', 'smlHreg.userlist', 'smlHreg.docadd']);
 var profile = angular.module('smlHreg.profile', ['ui.router', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications']);
-angular.module('smlHreg.userlist',[]);
-angular.module('smlHreg.doclist',[]);
+angular.module('smlHreg.userlist', []);
+angular.module('smlHreg.doclist', []);
+angular.module('smlHreg.docadd', []);
 
 profile.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');
@@ -55,7 +56,7 @@ profile.config(function ($stateProvider, $urlRouterProvider) {
                 auth: true
             }
         })
-        ;
+    ;
 });
 
 smlHreg.config(function ($stateProvider, $urlRouterProvider) {
@@ -80,6 +81,10 @@ smlHreg.config(function ($stateProvider, $urlRouterProvider) {
             url: '/users',
             controller: 'UserListCtrl',
             templateUrl: 'users/list/userlist.html'
+        }).state('docadd', {
+            url: '/documents/add',
+            controller: 'DocAddCtrl',
+            templateUrl: 'documents/add/docadd.html'
         });
 });
 
@@ -111,6 +116,8 @@ smlHreg.config(['$httpProvider', function ($httpProvider) {
                 redirectToState('error404');
             } else if (response.status === 409) {
                 NotificationsService.showError(response);
+            } else if (response.status === 400) {
+                $log.warn("400"+response.data);
             } else {
                 NotificationsService.showError('Something went wrong..', 'Unexpected error');
             }

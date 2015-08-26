@@ -43,10 +43,11 @@ lazy val commonDependencies = unitTestingStack ++ loggingStack
 val scalatra = "org.scalatra" %% "scalatra" % scalatraVersion
 val scalatraScalatest = "org.scalatra" %% "scalatra-scalatest" % scalatraVersion % "test"
 val scalatraJson = "org.scalatra" %% "scalatra-json" % scalatraVersion
+val scalatraCommands = "org.scalatra" %% "scalatra-commands" % scalatraVersion
 val scalatraSwagger = "org.scalatra" %% "scalatra-swagger" % scalatraVersion
 val json4s = "org.json4s" %% "json4s-native" % json4sVersion
 val scalatraAuth = "org.scalatra" %% "scalatra-auth" % scalatraVersion exclude("commons-logging", "commons-logging")
-lazy val scalatraStack = Seq(scalatra, scalatraScalatest, scalatraJson, scalatraSwagger, json4s, scalatraAuth)
+lazy val scalatraStack = Seq(scalatra, scalatraScalatest, scalatraJson, scalatraSwagger, json4s, scalatraAuth, scalatraCommands)
 
 val javaxMailSun = "com.sun.mail" % "javax.mail" % "1.5.3"
 

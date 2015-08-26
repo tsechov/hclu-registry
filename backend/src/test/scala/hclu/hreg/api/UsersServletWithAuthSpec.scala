@@ -7,24 +7,25 @@ import hclu.hreg.BaseServletSpec
 import hclu.hreg.service.model.UserJson
 import hclu.hreg.service.user.UserService
 import hclu.hreg.test.UserTestHelpers
-import org.mockito.Matchers._
+import org.mockito.Matchers
+import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatra.auth.Scentry
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.json4s.JsonDSL._
+
+import scala.concurrent.Future
 
 class UsersServletWithAuthSpec extends BaseServletSpec with UserTestHelpers {
 
   def onServletWithMocks(authenticated: Boolean, testToExecute: (UserService, Scentry[UserJson]) => Unit) {
     val userService = mock[UserService]
 
-    val mockedScentry = mock[Scentry[UserJson]]
-    when(mockedScentry.isAuthenticated(any[HttpServletRequest], any[HttpServletResponse])) thenReturn authenticated
-
-    val servlet: MockUsersServlet = new MockUsersServlet(userService, mockedScentry)
+    val servlet: MockUsersServlet = new MockUsersServlet(userService, authenticated)
     addServlet(servlet, "/*")
 
-    testToExecute(userService, mockedScentry)
+    testToExecute(userService, servlet.mockedScentry)
   }
 
   "GET /logout" should "call logout() when user is already authenticated" in {
@@ -51,17 +52,24 @@ class UsersServletWithAuthSpec extends BaseServletSpec with UserTestHelpers {
         status should be (200)
         body should be ("{\"id\":\"" + uuidStr +
           "\",\"login\":\"Jas Kowalski\",\"email\":\"kowalski@kowalski.net\"," +
-          "\"token\":\"token\",\"createdOn\":\"20150603T132503.000Z\"}")
+          "\"token\":\"token1\",\"createdOn\":\"20150603T132503.000Z\"}")
       })
   }
 
-  class MockUsersServlet(userService: UserService, mockedScentry: Scentry[UserJson]) extends UsersServlet(userService) with MockitoSugar {
-    override def scentry(implicit request: javax.servlet.http.HttpServletRequest) = mockedScentry
-    override def user(implicit request: javax.servlet.http.HttpServletRequest) =
-      new UserJson(
-        UUID.fromString(uuidStr),
-        "Jas Kowalski", "kowalski@kowalski.net", "token", createdOn
-      )
+  "POST /register" should "register new user" in {
+
+    onServletWithMocks (authenticated = true, testToExecute = (userService, mock) => {
+      when(userService.isUserDataValid(Some("newUser"), Some("newUser@sml.com"), Some("secret"))).thenReturn(true)
+      when(userService.checkUserExistenceFor("newUser", "newUser@sml.com")).thenReturn(Future.successful(Right()))
+      when(userService.registerNewUser("newUser", "newUser@sml.com", "secret", "first", "last")).thenReturn(Future.successful())
+      post("/register", mapToJson(Map("login" -> "newUser", "email" -> "newUser@sml.com", "password" -> "secret", "firstname" -> "first", "lastname" -> "last")),
+        defaultJsonHeaders) {
+
+        status should be(201)
+      }
+    })
+
   }
+
 }
 

@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form role="form" name="addForm" ng-submit="addDocument()" novalidate>
+                <h3>Add document</h3>
+
+                <div class="form-group">
+                    <label for="preId">Pre-filing registration number</label>
+                    <input id="preId" type="text" name="preId" class="form-control" placeholder="Pre-filing registration number" ng-model="doc.preId" >
+                    <p class="text-danger form-control-static" ng-show="addForm.preId.$error.remote">{{remoteErrors.preId}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="postId">Post-filing registration number</label>
+                    <input id="postId" type="text" name="postId" class="form-control" placeholder="Post-filing registration number" ng-model="doc.postId" >
+                    <p class="text-danger form-control-static" ng-show="addForm.postId.$error.remote">{{remoteErrors.postId}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="senderDescription">Sender's name</label>
+                    <input id="senderDescription" type="text" name="senderDescription" class="form-control" placeholder="Sender's name" ng-model="doc.senderDescription" >
+                    <p class="text-danger form-control-static" ng-show="addForm.senderDescription.$error.remote">{{remoteErrors.senderDescription}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="description">Subject</label>
+                    <textarea id="description" type="text" name="description" class="form-control" placeholder="Subject" ng-model="doc.description" ></textarea>
+                    <p class="text-danger form-control-static" ng-show="addForm.description.$error.remote">{{remoteErrors.description}}</p>
+                </div>
+                <div class="form-group">
+                    <label for="primaryRecipient">Primary recipient</label>
+                    <input id="primaryRecipient" type="email" name="primaryRecipient" class="form-control" placeholder="some@one.com" ng-model="doc.primaryRecipient" >
+                    <p class="text-danger form-control-static" ng-show="addForm.primaryRecipient.$error.remote">{{remoteErrors.primaryRecipient}}</p>
+                    <p class="text-danger form-control-static" ng-show="addForm.primaryRecipient.$dirty && addForm.primaryRecipient.$error.email">Invalid email address</p>
+                </div>
+                <div class="form-group">
+                    <label for="secondaryRecipient">Secondary recipient</label>
+                    <input id="secondaryRecipient" type="email" name="secondaryRecipient" class="form-control" placeholder="someone@else.com" ng-model="doc.secondaryRecipient" >
+                    <p class="text-danger form-control-static" ng-show="addForm.secondaryRecipient.$error.remote">{{remoteErrors.secondaryRecipient}}</p>
+                    <p class="text-danger form-control-static" ng-show="addForm.secondaryRecipient.$dirty && addForm.secondaryRecipient.$error.email">Invalid email address</p>
+                </div>
+                <div class="form-group">
+                    <label for="url" class="required">Document URL</label>
+                    <input id="url" type="url" name="url" class="form-control" placeholder="http://foo.bar/baz.pdf" ng-model="doc.url" required focus-on >
+                    <p class="text-danger form-control-static" ng-show="addForm.url.$dirty && addForm.url.$error.required">URL is required</p>
+                    <p class="text-danger form-control-static" ng-show="addForm.url.$dirty && addForm.url.$error.url">Invalid URL</p>
+                    <p class="text-danger form-control-static" ng-show="addForm.url.$error.remote">{{remoteErrors.url}}</p>
+                </div>
+
+                <button class="btn btn-primary btn-block" type="submit" ng-disabled="addForm.$invalid">Save document</button>
+            </form>
+        </div>
+    </div>
+</div>
+

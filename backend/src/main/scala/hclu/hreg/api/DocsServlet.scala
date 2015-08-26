@@ -5,9 +5,11 @@ import hclu.hreg.service.doc.DocService
 import hclu.hreg.service.model.DocIdsJson
 import hclu.hreg.service.user.UserService
 import org.scalatra.swagger.{StringResponseMessage, Swagger, SwaggerSupport}
-import org.scalatra.{AsyncResult, Created, FutureSupport}
+import org.scalatra.{AsyncResult, BadRequest, Created, FutureSupport}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scalaz.Scalaz._
+import scalaz._
 
 class DocsServlet(val docService: DocService, val userService: UserService)(override implicit val swagger: Swagger, ec: ExecutionContext)
     extends JsonServletWithAuthentication with SwaggerMappable with DocsServlet.ApiDocs with FutureSupport {
@@ -15,6 +17,10 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
   override def mappingPath = DocsServlet.MappingPath
 
   override protected implicit def executor = ec
+
+  case class ValidationError(field: String, msg: String)
+
+  case class InvalidRequest(validationErrors: List[ValidationError])
 
   post("/add", operation(add)) {
     haltIfNotAuthenticated()
@@ -25,17 +31,23 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
     val description = descriptionOpt
     val primaryRecipient = primaryRecipientOpt
     val secondaryRecipient = senderDescriptionOpt
-    val urlx = url
     val note = noteOpt
 
-    new AsyncResult {
-      val is = for {
-        preDoc <- docByRegId(preId)
-        postDoc <- docByRegId(postId)
-        ids <- docService.addDocument(user.id, preDoc.map(_.id), postDoc.map(_.id), senderDescription, description, primaryRecipient, secondaryRecipient, urlx, note)
-      } yield Created(DocIdsJson(ids._1, ids._2))
+    val urlV = urlOpt.toSuccess("no document url provided")
 
+    urlV match {
+      case Success(url) =>
+        new AsyncResult {
+          val is = for {
+            preDoc <- docByRegId(preId)
+            postDoc <- docByRegId(postId)
+            ids <- docService.addDocument(user.id, preDoc.map(_.id), postDoc.map(_.id), senderDescription, description, primaryRecipient, secondaryRecipient, url, note)
+          } yield Created(DocIdsJson(ids._1, ids._2))
+
+        }
+      case Failure(msg) => BadRequest(InvalidRequest(List(ValidationError("url", msg))))
     }
+
   }
 
   private def docByRegId(idOpt: Option[Int]) = idOpt match {
@@ -55,7 +67,7 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
 
   private def secondaryRecipientOpt: Option[String] = (parsedBody \ "secondaryRecipient").extractOpt[String]
 
-  private def url: String = (parsedBody \ "url").extract[String]
+  private def urlOpt: Option[String] = (parsedBody \ "url").extractOpt[String]
 
   private def noteOpt: Option[String] = (parsedBody \ "note").extractOpt[String]
 

@@ -16,14 +16,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTestHelpers {
   var servlet: UsersServlet = _
 
-  def onServletWithMocks(testToExecute: (UserService) => Unit) = {
+  def onServletWithMocks(testToExecute: (UserService) => Unit, authenticated: Boolean = true) = {
     val dao = new UserDao(sqlDatabase)
     dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1", "first1", "last1"))
     dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2", "first2", "last2"))
 
     val userService = spy(new UserService(dao, new RegistrationDataValidator(), new DummyEmailService(), new EmailTemplatingEngine))
 
-    servlet = new UsersServlet(userService)
+    servlet = new MockUsersServlet(userService, authenticated)
     addServlet(servlet, "/*")
 
     testToExecute(userService)
@@ -45,8 +45,8 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
       (userService) =>
         post("/register", defaultJsonHeaders) {
           val option: Option[String] = (stringToJson(body) \ "value").extractOpt[String]
-          option should be(Some("Wrong user data!"))
           status should be(400)
+          option should be(Some("Wrong user data!"))
         }
     }
   }
@@ -117,17 +117,17 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
   "PATCH /" should "update email when email is given" in {
     onServletWithMocks(userService => {
       val email = "coolmail@awesome.rox"
-      session {
-        //authenticate to perform change
-        post("/", mapToJson(Map("login" -> "admin", "password" -> "pass")), defaultJsonHeaders) {
-          status should be (200)
-        }
+      //      session {
+      //        //authenticate to perform change
+      //        post("/", mapToJson(Map("login" -> "admin", "password" -> "pass")), defaultJsonHeaders) {
+      //          status should be (200)
+      //        }
 
-        patch("/", mapToJson(Map("email" -> email)), defaultJsonHeaders) {
-          status should be (204)
-          verify(userService).changeEmail(anyString, Matchers.eq(email))
-        }
+      patch("/", mapToJson(Map("email" -> email)), defaultJsonHeaders) {
+        status should be (204)
+        verify(userService).changeEmail(anyString, Matchers.eq(email))
       }
+      //      }
     })
   }
 
@@ -137,7 +137,7 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
       patch("/", mapToJson(Map("email" -> email)), defaultJsonHeaders) {
         status should be (401)
       }
-    })
+    }, false)
   }
 
   "PATCH /" should "not update email when it's used by another user" in {
