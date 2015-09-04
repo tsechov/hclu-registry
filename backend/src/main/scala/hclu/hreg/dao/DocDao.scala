@@ -6,7 +6,8 @@ import hclu.hreg.dao.sql.SqlDatabase
 import hclu.hreg.domain.Doc
 import org.joda.time.DateTime
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
 
 class DocDao(protected val database: SqlDatabase)(implicit val ec: ExecutionContext) extends SqlDocSchema {
 
@@ -15,10 +16,14 @@ class DocDao(protected val database: SqlDatabase)(implicit val ec: ExecutionCont
 
   type DocId = UUID
 
-  def add(doc: Doc): Future[Int] = {
+  def add(doc: Doc, postAction: (Int) => Future[Unit]): Future[Int] = {
     val action = (for {
       regId <- addAction(doc)
-    } yield regId).transactionally
+
+    } yield {
+      Await.result(postAction(regId), 20 seconds)
+      regId
+    }).transactionally
 
     db.run(action)
   }
@@ -74,7 +79,13 @@ trait SqlDocSchema {
 
     def secondaryRecipient = column[Option[String]]("secondary_recipient")
 
-    def url = column[String]("url")
+    def scannedDocumentId = column[String]("scan_doc_id")
+
+    def scannedDocumentName = column[String]("scan_doc_name")
+
+    def emailDocumentId = column[Option[String]]("email_doc_id")
+
+    def emailDocumentName = column[Option[String]]("email_doc_name")
 
     def emailId = column[Option[UUID]]("email_id")
 
@@ -88,7 +99,27 @@ trait SqlDocSchema {
 
     def deleted = column[Boolean]("deleted")
 
-    def * = (id, regId, preId, postId, createdOn, createdBy, senderDescription, description, primaryRecipient, secondaryRecipient, url, emailId, note, saved, savedOn, savedBy, deleted) <>
+    def * = (
+      id,
+      regId,
+      preId,
+      postId,
+      createdOn,
+      createdBy,
+      senderDescription,
+      description,
+      primaryRecipient,
+      secondaryRecipient,
+      scannedDocumentId,
+      scannedDocumentName,
+      emailDocumentId,
+      emailDocumentName,
+      emailId,
+      note,
+      saved,
+      savedOn,
+      savedBy,
+      deleted) <>
       ((Doc.apply _).tupled, Doc.unapply)
 
     // format: ON

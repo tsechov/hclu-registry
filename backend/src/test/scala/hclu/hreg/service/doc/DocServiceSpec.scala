@@ -5,6 +5,9 @@ import java.util.UUID
 import hclu.hreg.common.{FixtureTimeClock, RealTimeClock}
 import hclu.hreg.dao.DocDao
 import hclu.hreg.domain.{Doc, User}
+import hclu.hreg.service.TempFileSupport
+import hclu.hreg.service.dropbox.Dropbox.FileToStore
+import hclu.hreg.service.dropbox.{FileToDropbox, DropboxService}
 import hclu.hreg.service.templates.EmailContentWithSubject
 
 import hclu.hreg.test.{DocTestHelpers, FlatSpecWithSql}
@@ -13,29 +16,38 @@ import org.mockito.BDDMockito._
 import org.mockito.Matchers
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.scalatest
 import org.scalatest.mock.MockitoSugar
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class DocServiceSpec extends FlatSpecWithSql with scalatest.Matchers with MockitoSugar with DocTestHelpers {
+class DocServiceSpec extends FlatSpecWithSql with scalatest.Matchers with MockitoSugar with DocTestHelpers with TempFileSupport {
   def prepareDocDaoMock: DocDao = {
     val dao = new DocDao(sqlDatabase)
     Future.sequence(Seq(
-      dao.add(newDoc(uuid, clock.now)),
-      dao.add(newDoc(uuid, clock.now))
+      dao.add(newDoc(uuid, "foo", "bar", clock.now), { _ => Future.successful() }),
+      dao.add(newDoc(uuid, "foo", "bar", clock.now), { _ => Future.successful() })
     )).futureValue
     dao
   }
+
+  def prepareDropboxMock: DropboxService = {
+    mock[DropboxService]
+  }
+
   override implicit val clock = new FixtureTimeClock(System.currentTimeMillis())
   var dao: DocDao = _
   var target: DocService = _
+  var dropbox: DropboxService = _
 
   override protected def beforeEach() = {
     super.beforeEach()
     dao = prepareDocDaoMock
+    dropbox = prepareDropboxMock
 
-    target = new DocService(dao)
+    target = new DocService(dao, dropbox)
   }
 
   "addDoc" should "add doc with unique regid" in {
@@ -46,8 +58,19 @@ class DocServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mockit
     val description: Option[String] = Some(rndString)
     val primaryRecipient: Option[String] = Some(rndString)
     val secondaryRecipient: Option[String] = Some(rndString)
-    val url: String = rndString
+    val scannedDocumentId: String = rndString
+    val scannedDocumentName: String = rndString
+    val emailDocumentId: Option[String] = Some(rndString)
+    val emailDocumentName: Option[String] = Some(rndString)
     val note: Option[String] = Some(rndString)
+
+    when(dropbox.storeFile(any[Int])(any[FileToDropbox])).thenAnswer(new Answer[Future[FileToStore]]() {
+
+      override def answer(invocation: InvocationOnMock): Future[FileToStore] = {
+        val arg = invocation.getArgumentAt[FileToDropbox](1, classOf[FileToDropbox])
+        Future.successful(FileToStore("foo", "bar"))
+      }
+    })
 
     // When
     val (id, regId) = target.addDocument(
@@ -58,7 +81,10 @@ class DocServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mockit
       description,
       primaryRecipient,
       secondaryRecipient,
-      url,
+      scannedDocumentId,
+      scannedDocumentName,
+      emailDocumentId,
+      emailDocumentName,
       note
     ).futureValue
 
@@ -74,7 +100,10 @@ class DocServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mockit
     doc.description should be (description)
     doc.primaryRecipient should be (primaryRecipient)
     doc.secondaryRecipient should be (secondaryRecipient)
-    doc.url should be (url)
+    doc.scannedDocumentId should be (FileToDropbox(fromDocId(scannedDocumentId).getAbsolutePath).id)
+    doc.scannedDocumentName should be (scannedDocumentName)
+    doc.emailDocumentId should be (Some(FileToDropbox(fromDocId(emailDocumentId.get).getAbsolutePath).id))
+    doc.emailDocumentName should be (emailDocumentName)
     doc.note should be (note)
 
     doc.createdOn should be (clock.nowUtc)

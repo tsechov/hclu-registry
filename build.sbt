@@ -20,7 +20,16 @@ val scalaLoggingVersion = "3.1.0"
 val jettyVersion = "9.2.6.v20141205"
 val json4sVersion = "3.2.11"
 val seleniumVersion = "2.46.0"
+val akkaVersion = "2.3.12"
+val camelVersion = "2.15.3"
+val awsSdkVersion = "1.10.15"
 
+val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+val akkaCamel ="com.typesafe.akka" %% "akka-camel" % akkaVersion
+val camelDropbox = "org.apache.camel" % "camel-dropbox" % camelVersion
+val akkaTestKit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
+val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % awsSdkVersion
+lazy val integrationStack = Seq(akka, akkaCamel, camelDropbox, akkaTestKit, awsSdk)
 val slf4jApi = "org.slf4j" % "slf4j-api" % slf4jVersion
 val logBackClassic = "ch.qos.logback" % "logback-classic" % logBackVersion
 val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion
@@ -145,7 +154,7 @@ lazy val backend: Project = (project in file("backend"))
   .enablePlugins(BuildInfoPlugin)
   .settings(commonSettings ++ webSettings: _*)
   .settings(
-    libraryDependencies ++= (jodaDependencies ++ slickStack ++ scalatraStack :+ javaxMailSun) ++
+    libraryDependencies ++= (jodaDependencies ++ slickStack ++ scalatraStack ++ integrationStack :+ javaxMailSun) ++
       Seq(jettyContainer, typesafeConfig, servletApiProvided, bugsnag),
     buildInfoPackage := "hclu.hreg.version",
     buildInfoObject := "BuildInfo",

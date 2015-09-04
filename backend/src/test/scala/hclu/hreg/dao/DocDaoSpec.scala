@@ -9,6 +9,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
 class DocDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers with DocTestHelpers {
@@ -25,7 +26,7 @@ class DocDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers with Doc
     super.beforeEach()
 
     for (i <- 1 to randomIds.size) {
-      dao.add(newDoc(randomIds(i - 1), createdOn)).futureValue
+      dao.add(newDoc(randomIds(i - 1), "foo", "bar", createdOn), { id => Future.successful() }).futureValue
     }
   }
 
@@ -34,7 +35,7 @@ class DocDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers with Doc
     val id = UUID.randomUUID()
 
     // When
-    val newRegId = dao.add(newDoc(id, createdOn)).futureValue //should be (4)
+    val newRegId = dao.add(newDoc(id, "foo", "bar", createdOn), { id => Future.successful() }).futureValue //should be (4)
 
     // Then
     newRegId should be(4)

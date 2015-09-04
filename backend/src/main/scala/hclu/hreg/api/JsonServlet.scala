@@ -8,6 +8,7 @@ import hclu.hreg.api.serializers.{DateTimeSerializer, RequestLogger, UuidSeriali
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.{JValueResult, NativeJsonSupport}
+import org.scalatra.servlet.SizeConstraintExceededException
 import org.scalatra.swagger.SwaggerSupport
 
 trait Mappable {
@@ -52,6 +53,11 @@ abstract class JsonServlet extends ScalatraServlet with RequestLogger with Nativ
       val error = ErrorResponse("Request parsing error")
       logger.info(error.toString, t)
       halt(BadRequest(error, error.xHeader))
+    }
+    case t: SizeConstraintExceededException => {
+      val error = ErrorResponse("Request entity too large")
+      logger.info(error.toString, t)
+      halt(RequestEntityTooLarge(error, error.xHeader))
     }
     case t: Exception => {
       val error = ErrorResponse("Request processing error")

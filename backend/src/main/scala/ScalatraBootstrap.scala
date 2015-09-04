@@ -1,6 +1,7 @@
 import java.util.{Locale, UUID}
 import javax.servlet.ServletContext
 
+import akka.actor.ActorSystem
 import hclu.hreg.Beans
 import hclu.hreg.api._
 import hclu.hreg.api.swagger.SwaggerServlet
@@ -39,6 +40,7 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     mountServlet(new DocsServlet(docService, userService))
     mountServlet(new VersionServlet)
     mountServlet(new SwaggerServlet)
+    mountServlet(new UploadServlet)
 
     context.setAttribute("appObject", this)
 
@@ -57,5 +59,6 @@ class ScalatraBootstrap extends LifeCycle with Beans {
 
   override def destroy(context: ServletContext) {
     sqlDatabase.close()
+    system.shutdown()
   }
 }

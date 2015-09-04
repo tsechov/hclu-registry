@@ -6,10 +6,10 @@ import hclu.hreg.domain.Doc
 import org.joda.time.DateTime
 
 trait DocTestHelpers {
-  def newDoc(id: UUID, createdOn: DateTime) = {
+  def newDoc(id: UUID, scanDocId: String, scanDocName: String, createdOn: DateTime) = {
 
     val createdBy = UUID.randomUUID();
-    val url = "urljool"
-    Doc(id, -1, None, None, createdOn, createdBy, None, None, None, None, url, None, None, false, None, None, false)
+
+    Doc(id, -1, None, None, createdOn, createdBy, None, None, None, None, scanDocId, scanDocName, None, None, None, None, false, None, None, false)
   }
 }

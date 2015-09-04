@@ -1,3 +1,3 @@
 #!/bin/bash
 . setenv
-sbt "~;container:start; container:reload /"
+sbt -jvm-debug 5005 "~;container:start; container:reload /"

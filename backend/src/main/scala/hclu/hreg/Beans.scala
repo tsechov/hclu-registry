@@ -1,5 +1,6 @@
 package hclu.hreg
 
+import akka.actor.ActorSystem
 import hclu.hreg.common.RealTimeClock
 import hclu.hreg.common.logging.bugsnag.BugsnagErrorReporter
 import hclu.hreg.dao.sql.SqlDatabase
@@ -7,6 +8,7 @@ import hclu.hreg.dao.{DatabaseConfig, Daos}
 import hclu.hreg.service.PasswordRecoveryService
 import hclu.hreg.service.config.{CoreConfig, EmailConfig}
 import hclu.hreg.service.doc.DocService
+import hclu.hreg.service.dropbox.DropboxService
 import hclu.hreg.service.email.{DummyEmailService, SmtpEmailService}
 import hclu.hreg.service.templates.EmailTemplatingEngine
 import hclu.hreg.service.user.{RegistrationDataValidator, UserService}
@@ -15,14 +17,18 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
+import akka._
 
 trait Beans extends LazyLogging with Daos {
+
   lazy val config = new CoreConfig with EmailConfig with DatabaseConfig {
     override def rootConfig = ConfigFactory.load()
   }
 
   override lazy val sqlDatabase = SqlDatabase.create(config)
   override implicit val ec: ExecutionContext = global
+
+  lazy val system = ActorSystem("hreg-actors", config.rootConfig)
 
   lazy val emailService = if (config.emailEnabled) {
     new SmtpEmailService(config)
@@ -50,7 +56,9 @@ trait Beans extends LazyLogging with Daos {
     config
   )
 
-  lazy val docService = new DocService(docDao)
+  lazy val dropbox = new DropboxService(system, config.rootConfig)
+
+  lazy val docService = new DocService(docDao, dropbox)
 
   lazy val errorReporter = BugsnagErrorReporter(config)
 

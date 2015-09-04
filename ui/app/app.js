@@ -11,7 +11,7 @@ var smlHreg = angular.module('smlHreg', ['smlHreg.templates', 'smlHreg.profile',
 var profile = angular.module('smlHreg.profile', ['ui.router', 'smlHreg.session', 'smlHreg.common', 'smlHreg.notifications']);
 angular.module('smlHreg.userlist', []);
 angular.module('smlHreg.doclist', []);
-angular.module('smlHreg.docadd', []);
+angular.module('smlHreg.docadd', ['angularFileUpload']);
 
 profile.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');

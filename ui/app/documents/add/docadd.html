@@ -1,8 +1,10 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form role="form" name="addForm" ng-submit="addDocument()" novalidate>
-                <h3>Add document</h3>
+        <form role="form" name="addForm" ng-submit="addDocument()" novalidate>
+            <h3>Add document</h3>
+            <div class="col-md-4 col-md-offset-2">
+
+
 
                 <div class="form-group">
                     <label for="preId">Pre-filing registration number</label>
@@ -24,6 +26,11 @@
                     <textarea id="description" type="text" name="description" class="form-control" placeholder="Subject" ng-model="doc.description" ></textarea>
                     <p class="text-danger form-control-static" ng-show="addForm.description.$error.remote">{{remoteErrors.description}}</p>
                 </div>
+                <button class="btn btn-primary btn-block" type="submit" ng-disabled="addForm.$invalid">Save document</button>
+            </div>
+            <div class="col-md-4">
+
+
                 <div class="form-group">
                     <label for="primaryRecipient">Primary recipient</label>
                     <input id="primaryRecipient" type="email" name="primaryRecipient" class="form-control" placeholder="some@one.com" ng-model="doc.primaryRecipient" >
@@ -37,15 +44,153 @@
                     <p class="text-danger form-control-static" ng-show="addForm.secondaryRecipient.$dirty && addForm.secondaryRecipient.$error.email">Invalid email address</p>
                 </div>
                 <div class="form-group">
-                    <label for="url" class="required">Document URL</label>
-                    <input id="url" type="url" name="url" class="form-control" placeholder="http://foo.bar/baz.pdf" ng-model="doc.url" required focus-on >
-                    <p class="text-danger form-control-static" ng-show="addForm.url.$dirty && addForm.url.$error.required">URL is required</p>
-                    <p class="text-danger form-control-static" ng-show="addForm.url.$dirty && addForm.url.$error.url">Invalid URL</p>
-                    <p class="text-danger form-control-static" ng-show="addForm.url.$error.remote">{{remoteErrors.url}}</p>
+                    <label for="note">Note</label>
+                    <textarea id="note" type="text" name="note" class="form-control" placeholder="Note" ng-model="doc.note" ></textarea>
+                    <p class="text-danger form-control-static" ng-show="addForm.description.$error.remote">{{remoteErrors.note}}</p>
                 </div>
 
-                <button class="btn btn-primary btn-block" type="submit" ng-disabled="addForm.$invalid">Save document</button>
-            </form>
+                <div class="form-group">
+                    <label for="scannedDocumentName">Scanned document</label>
+                    <div class="input-group" >
+                        <input id="scannedDocumentName" type="text" name="scannedDocumentName" class="form-control" placeholder="canned document" ng-model="doc.scannedDocumentName" ng-readonly="true" required >
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-danger" ng-disabled="!doc.scannedDocumentName || doc.scannedDocumentName.length == 0" ng-click="removeDocument('scanned')">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </span>
+                    </div>
+
+                    <p class="text-danger form-control-static" ng-show="addForm.scannedDocumentName.$error.remote">{{remoteErrors.scannedDocumentName}}</p>
+                    <p class="text-danger form-control-static" ng-show="addForm.scannedDocumentName.$error.required">Scanned document is required</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="emailDocumentName">Email document</label>
+                    <div class="input-group" >
+                        <input id="emailDocumentName" type="text" name="emailDocumentName" class="form-control" placeholder="Email document" ng-model="doc.emailDocumentName" ng-readonly="true" >
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-danger" ng-disabled="!doc.emailDocumentName || doc.emailDocumentName.length == 0" ng-click="removeDocument('email')">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+
+
+
+
+
+            </div>
+
+
+        </form>
+        <div class="col-md-2">
+
+
+        </div>
+
+        <div class="col-md-8 col-md-offset-2" style="margin-bottom: 40px">
+
+            <h3>Scanned document</h3>
+            <div class="fileUpload btn btn-primary" ng-disabled="scannedUploader.queue.length != 0">
+
+                <span>Select file</span>
+                <input type="file" class="upload" nv-file-select uploader="scannedUploader"/>
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50%">Name</th>
+                    <th ng-show="scannedUploader.isHTML5">Size</th>
+                    <th ng-show="scannedUploader.isHTML5">Progress</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in scannedUploader.queue">
+                    <td><strong>{{ item.file.name }}</strong></td>
+                    <td ng-show="scannedUploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                    <td ng-show="scannedUploader.isHTML5">
+                        <div class="progress" style="margin-bottom: 0;">
+                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    </td>
+                    <td nowrap>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        </button>
+                        <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                            <span class="glyphicon glyphicon-trash"></span> Remove
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+
+        </div>
+        <div class="col-md-8 col-md-offset-2" style="margin-bottom: 40px">
+
+            <h3>Email document</h3>
+            <div class="fileUpload btn btn-primary" ng-disabled="emailUploader.queue.length != 0">
+
+                <span>Select file</span>
+                <input type="file" class="upload" nv-file-select uploader="emailUploader"/>
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50%">Name</th>
+                    <th ng-show="emailUploader.isHTML5">Size</th>
+                    <th ng-show="emailUploader.isHTML5">Progress</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in emailUploader.queue">
+                    <td><strong>{{ item.file.name }}</strong></td>
+                    <td ng-show="emailUploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                    <td ng-show="emailUploader.isHTML5">
+                        <div class="progress" style="margin-bottom: 0;">
+                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    </td>
+                    <td nowrap>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        </button>
+                        <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                            <span class="glyphicon glyphicon-trash"></span> Remove
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@ import org.scalatra.{AsyncResult, BadRequest, Created, FutureSupport}
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz.Scalaz._
 import scalaz._
+import Scalaz._
 
 class DocsServlet(val docService: DocService, val userService: UserService)(override implicit val swagger: Swagger, ec: ExecutionContext)
     extends JsonServletWithAuthentication with SwaggerMappable with DocsServlet.ApiDocs with FutureSupport {
@@ -32,20 +33,44 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
     val primaryRecipient = primaryRecipientOpt
     val secondaryRecipient = senderDescriptionOpt
     val note = noteOpt
+    val scannedDocumentId = scannedDocumentIdOpt
 
-    val urlV = urlOpt.toSuccess("no document url provided")
+    val emailDocumentId = emailDocumentIdOpt
+    val emailDocumentName = emailDocumentNameOpt
 
-    urlV match {
-      case Success(url) =>
-        new AsyncResult {
-          val is = for {
-            preDoc <- docByRegId(preId)
-            postDoc <- docByRegId(postId)
-            ids <- docService.addDocument(user.id, preDoc.map(_.id), postDoc.map(_.id), senderDescription, description, primaryRecipient, secondaryRecipient, url, note)
-          } yield Created(DocIdsJson(ids._1, ids._2))
+    val scannedDocumentNameV = scannedDocumentNameOpt.toSuccess("scannedDocumentName")
+    val scannedDocumentIdV = scannedDocumentId.toSuccess("scannedDocumentId")
 
-        }
-      case Failure(msg) => BadRequest(InvalidRequest(List(ValidationError("url", msg))))
+    val res = for {
+      scannedDocumentId <- scannedDocumentIdV
+      scannedDocumentName <- scannedDocumentNameV
+    } yield {
+      new AsyncResult {
+        val is = for {
+          preDoc <- docByRegId(preId)
+          postDoc <- docByRegId(postId)
+          ids <- docService.addDocument(
+            user.id,
+            preDoc.map(_.id),
+            postDoc.map(_.id),
+            senderDescription,
+            description,
+            primaryRecipient,
+            secondaryRecipient,
+            scannedDocumentId,
+            scannedDocumentName,
+            emailDocumentId,
+            emailDocumentName,
+            note
+          )
+        } yield Created(DocIdsJson(ids._1, ids._2))
+
+      }
+    }
+
+    res match {
+      case Success(result) => result
+      case Failure(msg: String) => BadRequest(InvalidRequest(List(ValidationError(msg, s"no ${msg} provided"))))
     }
 
   }
@@ -55,21 +80,31 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
     case _ => Future.successful(None)
   }
 
-  private def preIdOpt: Option[Int] = (parsedBody \ "preId").extractOpt[Int]
+  private def preIdOpt: Option[Int] = parse[Int]("preId")
 
-  private def postIdOpt: Option[Int] = (parsedBody \ "postId").extractOpt[Int]
+  private def postIdOpt: Option[Int] = parse[Int]("postId")
 
-  private def senderDescriptionOpt: Option[String] = (parsedBody \ "senderDescription").extractOpt[String]
+  private def senderDescriptionOpt: Option[String] = parse[String]("senderDescription")
 
-  private def descriptionOpt: Option[String] = (parsedBody \ "description").extractOpt[String]
+  private def descriptionOpt: Option[String] = parse[String]("description")
 
-  private def primaryRecipientOpt: Option[String] = (parsedBody \ "primaryRecipient").extractOpt[String]
+  private def primaryRecipientOpt: Option[String] = parse[String]("primaryRecipient")
 
-  private def secondaryRecipientOpt: Option[String] = (parsedBody \ "secondaryRecipient").extractOpt[String]
+  private def secondaryRecipientOpt: Option[String] = parse[String]("secondaryRecipient")
 
-  private def urlOpt: Option[String] = (parsedBody \ "url").extractOpt[String]
+  private def scannedDocumentIdOpt: Option[String] = parse[String]("scannedDocumentId")
 
-  private def noteOpt: Option[String] = (parsedBody \ "note").extractOpt[String]
+  private def scannedDocumentNameOpt: Option[String] = parse[String]("scannedDocumentName")
+
+  private def emailDocumentIdOpt: Option[String] = parse[String]("emailDocumentId")
+
+  private def emailDocumentNameOpt: Option[String] = parse[String]("emailDocumentName")
+
+  private def noteOpt: Option[String] = parse[String]("note")
+
+  def parse[A](fieldName: String)(implicit mf: scala.reflect.Manifest[A]): Option[A] = {
+    (parsedBody \ fieldName).extractOpt[A]
+  }
 
 }
 
