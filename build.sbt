@@ -23,12 +23,16 @@ val seleniumVersion = "2.46.0"
 val akkaVersion = "2.3.12"
 val camelVersion = "2.15.3"
 val awsSdkVersion = "1.10.15"
+val liquibaseVersion = "3.4.1"
 
 val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
 val akkaCamel ="com.typesafe.akka" %% "akka-camel" % akkaVersion
 val camelDropbox = "org.apache.camel" % "camel-dropbox" % camelVersion
 val akkaTestKit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % awsSdkVersion
+val liquiBase = "org.liquibase" % "liquibase-core" % liquibaseVersion
+val liquiBaseLog = "com.mattbertolini" % "liquibase-slf4j" % "1.2.1"
+
 lazy val integrationStack = Seq(akka, akkaCamel, camelDropbox, akkaTestKit, awsSdk)
 val slf4jApi = "org.slf4j" % "slf4j-api" % slf4jVersion
 val logBackClassic = "ch.qos.logback" % "logback-classic" % logBackVersion
@@ -67,7 +71,7 @@ val h2 = "com.h2database" % "h2" % "1.3.176"
 val postgres = "org.postgresql" % "postgresql" % "9.4-1201-jdbc41"
 val hikari = "com.zaxxer" % "HikariCP-java6" % "2.3.8"
 val flyway = "org.flywaydb" % "flyway-core" % "3.1"
-lazy val slickStack = Seq(slick, h2, postgres, hikari, flyway)
+lazy val slickStack = Seq(slick, h2, postgres, hikari, flyway, liquiBase, liquiBaseLog)
 
 val mockito = "org.mockito" % "mockito-all" % "1.10.19" % "test"
 val scalatest = "org.scalatest" %% "scalatest" % "2.2.3" % "test"
@@ -192,7 +196,8 @@ lazy val backend: Project = (project in file("backend"))
       },
       assembly <<= assembly dependsOn (packageWar in DefaultConf),
       publish := {},
-      bintrayUnpublish := {}
+      bintrayUnpublish := {},
+      parallelExecution in Test := false
     )
   )
 

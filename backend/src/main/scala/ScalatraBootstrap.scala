@@ -7,6 +7,7 @@ import hclu.hreg.api._
 import hclu.hreg.api.swagger.SwaggerServlet
 import hclu.hreg.common.Utils
 import hclu.hreg.common.logging.AsyncErrorReportingLogAppender
+import hclu.hreg.dao.sql.SqlDatabase
 import hclu.hreg.domain.User
 import hclu.hreg.version.BuildInfo
 import org.scalatra.{LifeCycle, ScalatraServlet}
@@ -26,7 +27,7 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     // Initialize error reporting client.
     AsyncErrorReportingLogAppender(config, errorReporter).init()
 
-    sqlDatabase.updateSchema()
+    SqlDatabase.updateSchema(sqlDatabase.connectionString)
 
     def mountServlet(servlet: ScalatraServlet with Mappable) {
       servlet match {
@@ -41,6 +42,7 @@ class ScalatraBootstrap extends LifeCycle with Beans {
     mountServlet(new VersionServlet)
     mountServlet(new SwaggerServlet)
     mountServlet(new UploadServlet)
+    mountServlet(new ContactsServlet(contactService, userService))
 
     context.setAttribute("appObject", this)
 

@@ -3,7 +3,8 @@ package hclu.hreg.dao
 import java.util.UUID
 
 import com.typesafe.scalalogging.LazyLogging
-import hclu.hreg.test.{DocTestHelpers, FlatSpecWithSql}
+import hclu.hreg.domain.Contact
+import hclu.hreg.test.FlatSpecWithSql
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.Matchers
 
@@ -11,11 +12,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
-class DocDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers with DocTestHelpers {
-  behavior of "DocDao"
+class ContactDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers {
+  behavior of "ContactDao"
 
   val createdOn = new DateTime(2015, 6, 3, 13, 25, 3, DateTimeZone.UTC)
-  var dao: DocDao = new DocDao(sqlDatabase)
+  var dao: ContactDao = new ContactDao(sqlDatabase)
 
   def generateRandomId = UUID.randomUUID()
 
@@ -25,28 +26,29 @@ class DocDaoSpec extends FlatSpecWithSql with LazyLogging with Matchers with Doc
     super.beforeAll()
 
     for (i <- 1 to randomIds.size) {
-      dao.add(newDoc(randomIds(i - 1), "foo", "bar", createdOn), { id => Future.successful() }).futureValue
+      val id = randomIds(i - 1)
+      val contact = Contact(id, Some("first"), Some("last"), s"email${id}")
+      dao.add(contact).futureValue
     }
   }
 
-  it should "add new doc" in {
+  it should "add new contact" in {
     // Given
     val id = UUID.randomUUID()
 
     // When
-    val newRegId = dao.add(newDoc(id, "foo", "bar", createdOn), { id => Future.successful() }).futureValue //should be (4)
+    dao.add(Contact(id, Some("first"), Some("last"), "email")).futureValue //should be (4)
 
     // Then
-    newRegId should be(10003)
+
     dao.findById(id).futureValue should be('defined)
   }
 
-  it should "find doc by regId" in {
+  it should "find contact by id" in {
     // Given
-    val ids = 10000 until 10000 + randomIds.size
 
-    ids foreach { id =>
-      dao.findByRegId(id).futureValue should be('defined)
+    randomIds foreach { id =>
+      dao.findById(id).futureValue should be('defined)
     }
 
   }

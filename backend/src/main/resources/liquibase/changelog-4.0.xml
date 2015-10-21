@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="changelog-4.0.0" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="CONTACTS">
+            <column name="ID" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="FIRSTNAME" type="varchar(255)"/>
+            <column name="LASTNAME" type="varchar(255)"/>
+            <column name="EMAIL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTIVE" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="changelog-4.0.1" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="DOCS_RECIPIENTS">
+            <column name="DOC_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RECIPIENT_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="changelog-4.0.3" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addPrimaryKey
+                columnNames="DOC_ID, RECIPIENT_ID"
+                constraintName="PK_DOCS_RECIPIENTS"
+                tableName="DOCS_RECIPIENTS"/>
+
+    </changeSet>
+    <changeSet id="changelog-4.0.4" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseTableName="DOCS_RECIPIENTS"
+                                 baseColumnNames="DOC_ID"
+                                 referencedTableName="DOCS"
+                                 referencedColumnNames="ID"
+                                 constraintName="DOC_RECIPIENT_DOC_FK"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+    <changeSet id="changelog-4.0.5" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseTableName="DOCS_RECIPIENTS"
+                                 baseColumnNames="RECIPIENT_ID"
+                                 referencedTableName="CONTACTS"
+                                 referencedColumnNames="ID"
+                                 constraintName="DOC_RECIPIENT_CONTACT_FK"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"/>
+    </changeSet>
+</databaseChangeLog>

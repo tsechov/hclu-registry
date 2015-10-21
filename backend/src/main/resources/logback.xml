@@ -10,9 +10,12 @@
         </encoder>
     </appender>
 
+    <!--<logger name="liquibase" level="DEBUG" />-->
+    <logger name="scala.slick" level="SQL"/>
     <logger name="hclu.hreg" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
+
 
     <!--<logger name="slick.compiler.QueryCompiler" level="DEBUG" />-->
 

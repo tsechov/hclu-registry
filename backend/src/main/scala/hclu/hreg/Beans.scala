@@ -7,6 +7,7 @@ import hclu.hreg.dao.sql.SqlDatabase
 import hclu.hreg.dao.{DatabaseConfig, Daos}
 import hclu.hreg.service.PasswordRecoveryService
 import hclu.hreg.service.config.{CoreConfig, EmailConfig}
+import hclu.hreg.service.contact.ContactService
 import hclu.hreg.service.doc.DocService
 import hclu.hreg.service.dropbox.DropboxService
 import hclu.hreg.service.email.{DummyEmailService, SmtpEmailService}
@@ -17,7 +18,6 @@ import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
-import akka._
 
 trait Beans extends LazyLogging with Daos {
 
@@ -59,6 +59,8 @@ trait Beans extends LazyLogging with Daos {
   lazy val dropbox = new DropboxService(system, config.rootConfig)
 
   lazy val docService = new DocService(docDao, dropbox)
+
+  lazy val contactService = new ContactService(contactDao)
 
   lazy val errorReporter = BugsnagErrorReporter(config)
 

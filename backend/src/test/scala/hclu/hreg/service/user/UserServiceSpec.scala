@@ -23,7 +23,8 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
     val dao = new UserDao(sqlDatabase)
     Future.sequence(Seq(
       dao.add(newUser("Admin", "admin@sml.com", "pass", "salt", "token1", "first1", "last1")),
-      dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2", "first2", "last2"))
+      dao.add(newUser("Admin2", "admin2@sml.com", "pass", "salt", "token2", "first2", "last2")),
+      dao.add(newUser("Admin3", "admin3@sml.com", "pass", "salt", "token3", "first3", "last3"))
     )).futureValue
     dao
   }
@@ -34,8 +35,8 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
   var userDao: UserDao = _
   var userService: UserService = _
 
-  override protected def beforeEach() = {
-    super.beforeEach()
+  override protected def beforeAll() = {
+    super.beforeAll()
     userDao = prepareUserDaoMock
     userService = new UserService(userDao, registrationDataValidator, emailService, emailTemplatingEngine)
   }
@@ -138,7 +139,7 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
   }
 
   "changeLogin" should "change login for specified user" in {
-    val user = userDao.findByLowerCasedLogin("admin").futureValue
+    val user = userDao.findByLowerCasedLogin("admin3").futureValue
     val userLogin = user.get.login
     val newLogin = "newadmin"
     userService.changeLogin(userLogin, newLogin).futureValue should be ('right)
@@ -154,6 +155,7 @@ class UserServiceSpec extends FlatSpecWithSql with scalatest.Matchers with Mocki
 
   "changePassword" should "change password if current is correct and new is present" in {
     // Given
+    val users = userDao.findAll.futureValue
     val user = userDao.findByLowerCasedLogin("admin").futureValue.get
     val currentPassword = "pass"
     val newPassword = "newPass"

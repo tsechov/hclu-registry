@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="changelog-3.0" author="tsechov" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="DOCS">
+            <column name="ID" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REG_ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRE_ID" type="UUID"/>
+            <column name="POST_ID" type="UUID"/>
+            <column name="CREATED_ON" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_BY" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SENDER_DESCRIPTION" type="varchar(1000)"/>
+            <column name="DESCRIPTION" type="varchar(1000)"/>
+            <column name="PRIMARY_RECIPIENT" type="varchar(1000)"/>
+            <column name="SECONDARY_RECIPIENT" type="varchar(1000)"/>
+            <column name="EMAIL_ID" type="UUID"/>
+            <column name="NOTE" type="varchar(1000)"/>
+            <column name="SAVED" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SAVED_ON" type="timestamp"/>
+            <column name="SAVED_BY" type="UUID"/>
+            <column name="DELETED" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCAN_DOC_ID" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCAN_DOC_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL_DOC_ID" type="varchar(255)"/>
+            <column name="EMAIL_DOC_NAME" type="varchar(255)"/>
+        </createTable>
+        <addAutoIncrement
+                tableName="DOCS"
+                columnName="REG_ID"
+                columnDataType="INT"
+                incrementBy="1"
+                startWith="10000"/>
+    </changeSet>
+
+
+</databaseChangeLog>

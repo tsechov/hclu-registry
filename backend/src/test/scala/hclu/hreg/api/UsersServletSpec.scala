@@ -75,7 +75,7 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
       (userService) =>
         {
           val newUserWithExistingEmail = mapToJson(Map(
-            "login" -> "newUser",
+            "login" -> "newUser2",
             "email" -> "admin@sml.com",
             "password" -> "secret"
           ))
@@ -92,8 +92,8 @@ class UsersServletSpec extends BaseServletSpec with FlatSpecWithSql with UserTes
   "POST /register" should "use escaped Strings" in {
     onServletWithMocks {
       (userService) =>
-        post("/register", mapToJson(Map("login" -> "<script>alert('haxor');</script>", "email" -> "newUser@sml.com", "password" -> "secret", "firstname" -> "first", "lastname" -> "last")), defaultJsonHeaders) {
-          verify(userService).registerNewUser("&lt;script&gt;alert('haxor');&lt;/script&gt;", "newUser@sml.com", "secret", "first", "last")
+        post("/register", mapToJson(Map("login" -> "<script>alert('haxor');</script>", "email" -> "newUser3@sml.com", "password" -> "secret", "firstname" -> "first", "lastname" -> "last")), defaultJsonHeaders) {
+          verify(userService).registerNewUser("&lt;script&gt;alert('haxor');&lt;/script&gt;", "newUser3@sml.com", "secret", "first", "last")
         }
     }
   }

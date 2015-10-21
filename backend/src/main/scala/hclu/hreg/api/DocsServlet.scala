@@ -10,18 +10,13 @@ import org.scalatra.{AsyncResult, BadRequest, Created, FutureSupport}
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz.Scalaz._
 import scalaz._
-import Scalaz._
 
 class DocsServlet(val docService: DocService, val userService: UserService)(override implicit val swagger: Swagger, ec: ExecutionContext)
-    extends JsonServletWithAuthentication with SwaggerMappable with DocsServlet.ApiDocs with FutureSupport {
+    extends JsonServletWithAuthentication with SwaggerMappable with DocsServlet.ApiDocs with FutureSupport with ServletHelpers {
 
   override def mappingPath = DocsServlet.MappingPath
 
   override protected implicit def executor = ec
-
-  case class ValidationError(field: String, msg: String)
-
-  case class InvalidRequest(validationErrors: List[ValidationError])
 
   post("/add", operation(add)) {
     haltIfNotAuthenticated()
@@ -44,34 +39,29 @@ class DocsServlet(val docService: DocService, val userService: UserService)(over
     val res = for {
       scannedDocumentId <- scannedDocumentIdV
       scannedDocumentName <- scannedDocumentNameV
-    } yield {
-      new AsyncResult {
-        val is = for {
-          preDoc <- docByRegId(preId)
-          postDoc <- docByRegId(postId)
-          ids <- docService.addDocument(
-            user.id,
-            preDoc.map(_.id),
-            postDoc.map(_.id),
-            senderDescription,
-            description,
-            primaryRecipient,
-            secondaryRecipient,
-            scannedDocumentId,
-            scannedDocumentName,
-            emailDocumentId,
-            emailDocumentName,
-            note
-          )
-        } yield Created(DocIdsJson(ids._1, ids._2))
+    } yield new AsyncResult {
+      val is = for {
+        preDoc <- docByRegId(preId)
+        postDoc <- docByRegId(postId)
+        ids <- docService.addDocument(
+          user.id,
+          preDoc.map(_.id),
+          postDoc.map(_.id),
+          senderDescription,
+          description,
+          primaryRecipient,
+          secondaryRecipient,
+          scannedDocumentId,
+          scannedDocumentName,
+          emailDocumentId,
+          emailDocumentName,
+          note
+        )
+      } yield Created(DocIdsJson(ids._1, ids._2))
 
-      }
     }
 
-    res match {
-      case Success(result) => result
-      case Failure(msg: String) => BadRequest(InvalidRequest(List(ValidationError(msg, s"no ${msg} provided"))))
-    }
+    result(res.leftMap(missingField))
 
   }
 

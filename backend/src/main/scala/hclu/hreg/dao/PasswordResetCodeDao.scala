@@ -61,15 +61,15 @@ trait SqlPasswordResetCodeSchema {
   }
 
   // format: OFF
-  protected class PasswordResetCodes(tag: Tag) extends Table[SqlPasswordResetCode](tag, "password_reset_codes") {
-    def id        = column[UUID]("id", O.PrimaryKey)
-    def code      = column[String]("code")
-    def userId    = column[UUID]("user_id")
-    def validTo   = column[DateTime]("valid_to")
+  protected class PasswordResetCodes(tag: Tag) extends Table[SqlPasswordResetCode](tag, "PASSWORD_RESET_CODES") {
+    def id        = column[UUID]("ID", O.PrimaryKey)
+    def code      = column[String]("CODE")
+    def userId    = column[UUID]("USER_ID")
+    def validTo   = column[DateTime]("VALID_TO")
 
     def *         = (id, code, userId, validTo) <> (SqlPasswordResetCode.tupled, SqlPasswordResetCode.unapply)
 
-    def user      = foreignKey("password_reset_code_user_fk", userId, users)(
+    def user      = foreignKey("PASSWORD_RESET_CODE_USER_FK", userId, users)(
       _.id, onUpdate = ForeignKeyAction.Cascade, onDelete = ForeignKeyAction.Cascade)
     // format: ON
   }

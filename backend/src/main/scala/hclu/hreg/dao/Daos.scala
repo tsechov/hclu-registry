@@ -13,5 +13,7 @@ trait Daos {
 
   lazy val docDao = new DocDao(sqlDatabase)
 
+  lazy val contactDao = new ContactDao(sqlDatabase)
+
   def sqlDatabase: SqlDatabase
 }

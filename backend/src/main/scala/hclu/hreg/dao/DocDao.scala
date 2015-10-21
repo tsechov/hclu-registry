@@ -48,7 +48,7 @@ class DocDao(protected val database: SqlDatabase)(implicit val ec: ExecutionCont
 
 }
 
-trait SqlDocSchema {
+trait SqlDocSchema extends SqlDocRecipientSchema {
 
   protected val database: SqlDatabase
 
@@ -57,47 +57,47 @@ trait SqlDocSchema {
 
   protected val docs = TableQuery[Docs]
 
-  protected class Docs(tag: Tag) extends Table[Doc](tag, "docs") {
+  protected class Docs(tag: Tag) extends Table[Doc](tag, "DOCS") {
     // format: OFF
-    def id = column[UUID]("id", O.PrimaryKey)
+    def id = column[UUID]("ID", O.PrimaryKey)
 
-    def regId = column[Int]("reg_id", O.AutoInc)
+    def regId = column[Int]("REG_ID", O.AutoInc)
 
-    def preId = column[Option[UUID]]("pre_id")
+    def preId = column[Option[UUID]]("PRE_ID")
 
-    def postId = column[Option[UUID]]("post_id")
+    def postId = column[Option[UUID]]("POST_ID")
 
-    def createdOn = column[DateTime]("created_on")
+    def createdOn = column[DateTime]("CREATED_ON")
 
-    def createdBy = column[UUID]("created_by")
+    def createdBy = column[UUID]("CREATED_BY")
 
-    def senderDescription = column[Option[String]]("sender_description")
+    def senderDescription = column[Option[String]]("SENDER_DESCRIPTION")
 
-    def description = column[Option[String]]("description")
+    def description = column[Option[String]]("DESCRIPTION")
 
-    def primaryRecipient = column[Option[String]]("primary_recipient")
+    def primaryRecipient = column[Option[String]]("PRIMARY_RECIPIENT")
 
-    def secondaryRecipient = column[Option[String]]("secondary_recipient")
+    def secondaryRecipient = column[Option[String]]("SECONDARY_RECIPIENT")
 
-    def scannedDocumentId = column[String]("scan_doc_id")
+    def scannedDocumentId = column[String]("SCAN_DOC_ID")
 
-    def scannedDocumentName = column[String]("scan_doc_name")
+    def scannedDocumentName = column[String]("SCAN_DOC_NAME")
 
-    def emailDocumentId = column[Option[String]]("email_doc_id")
+    def emailDocumentId = column[Option[String]]("EMAIL_DOC_ID")
 
-    def emailDocumentName = column[Option[String]]("email_doc_name")
+    def emailDocumentName = column[Option[String]]("EMAIL_DOC_NAME")
 
-    def emailId = column[Option[UUID]]("email_id")
+    def emailId = column[Option[UUID]]("EMAIL_ID")
 
-    def note = column[Option[String]]("note")
+    def note = column[Option[String]]("NOTE")
 
-    def saved = column[Boolean]("saved")
+    def saved = column[Boolean]("SAVED")
 
-    def savedOn = column[Option[DateTime]]("saved_on")
+    def savedOn = column[Option[DateTime]]("SAVED_ON")
 
-    def savedBy = column[Option[UUID]]("saved_by")
+    def savedBy = column[Option[UUID]]("SAVED_BY")
 
-    def deleted = column[Boolean]("deleted")
+    def deleted = column[Boolean]("DELETED")
 
     def * = (
       id,
@@ -121,6 +121,9 @@ trait SqlDocSchema {
       savedBy,
       deleted) <>
       ((Doc.apply _).tupled, Doc.unapply)
+
+    def recipients = DocRecipientQuery.filter(_.docId === id)
+      .flatMap(_.recipientFK)
 
     // format: ON
   }

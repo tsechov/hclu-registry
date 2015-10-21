@@ -18,8 +18,8 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
 
   lazy val randomIds: List[UUID] = List.fill(3)(generateRandomId)
 
-  override def beforeEach() {
-    super.beforeEach()
+  override def beforeAll() {
+    super.beforeAll()
     for (i <- 1 to randomIds.size) {
       val login = "user" + i
       val password = "pass" + i
@@ -33,7 +33,7 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
 
   it should "add new user" in {
     // Given
-    val login = "newuser"
+    val login = "add new user"
     val email = "newemail@sml.com"
 
     // When
@@ -45,7 +45,7 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
 
   it should "fail with exception when trying to add user with existing login" in {
     // Given
-    val login = "newuser"
+    val login = "fail with exception"
     val email = "anotherEmaill@sml.com"
 
     dao.add(newUser(login, "somePrefix" + email, "somePass", "someSalt", "someToken", "someFirst", "someLast")).futureValue
@@ -59,7 +59,7 @@ class UserDaoSpec extends FlatSpecWithSql with LazyLogging with UserTestHelpers 
   it should "fail with exception when trying to add user with existing email" in {
     // Given
     val login = "anotherUser"
-    val email = "newemail@sml.com"
+    val email = "newemail2@sml.com"
 
     dao.add(newUser("somePrefixed" + login, email, "somePass", "someSalt", "someToken", "someFirst", "someLast")).futureValue
 

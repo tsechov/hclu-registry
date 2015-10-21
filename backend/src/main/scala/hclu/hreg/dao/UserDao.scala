@@ -104,29 +104,29 @@ trait SqlUserSchema {
 
   protected val users = TableQuery[Users]
 
-  protected class Users(tag: Tag) extends Table[User](tag, "users") {
+  class Users(tag: Tag) extends Table[User](tag, "USERS") {
     // format: OFF
-    def id = column[UUID]("id", O.PrimaryKey)
+    def id = column[UUID]("ID", O.PrimaryKey)
 
-    def login = column[String]("login")
+    def login = column[String]("LOGIN")
 
-    def loginLowerCase = column[String]("login_lowercase")
+    def loginLowerCase = column[String]("LOGIN_LOWERCASE")
 
-    def email = column[String]("email")
+    def email = column[String]("EMAIL")
 
-    def password = column[String]("password")
+    def password = column[String]("PASSWORD")
 
-    def salt = column[String]("salt")
+    def salt = column[String]("SALT")
 
-    def token = column[String]("token")
+    def token = column[String]("TOKEN")
 
-    def createdOn = column[DateTime]("created_on")
+    def createdOn = column[DateTime]("CREATED_ON")
 
-    def firstname = column[String]("firstname")
+    def firstname = column[String]("FIRSTNAME")
 
-    def lastname = column[String]("lastname")
+    def lastname = column[String]("LASTNAME")
 
-    def active = column[Boolean]("active")
+    def active = column[Boolean]("ACTIVE")
 
     def * = (id, login, loginLowerCase, email, password, salt, token, createdOn, firstname, lastname, active) <>
       ((User.apply _).tupled, User.unapply)
